@@ -2,26 +2,19 @@ import * as path from "path";
 import { Component } from "./types";
 import { readJsonFile } from "./util";
 
-interface CatalogMatch {
-  bundleId: string | null;
-  pathContains: string | null;
-  nameExact: string | null;
-}
-
-interface CatalogIdentity {
+// One allowlist entry: a known agent and the exact identifiers that match it.
+export interface AgentEntry {
   displayName: string;
   publisher?: string;
-  homepage?: string;
-}
-
-interface CatalogEntry {
-  match: CatalogMatch;
-  identity: CatalogIdentity;
+  names: string[]; // exact name matches (a/an .app/.exe suffix is ignored)
+  binaries: string[]; // exact executable basename matches
+  bundleIds: string[]; // exact bundle id matches
+  tokens: string[]; // specific substrings matched against path / launch-item label
   declaredCapabilities?: string[];
 }
 
-interface CatalogFile {
-  entries: CatalogEntry[];
+export interface Catalog {
+  agents: AgentEntry[];
 }
 
 export function defaultCatalogPath(): string {
@@ -29,66 +22,74 @@ export function defaultCatalogPath(): string {
   return path.join(__dirname, "..", "catalog", "known-agents.json");
 }
 
-export function loadCatalog(catalogPath: string): CatalogEntry[] {
-  const data = readJsonFile<CatalogFile>(catalogPath);
-  if (!data || !Array.isArray(data.entries)) return [];
-  return data.entries;
-}
-
-// Stage 4: catalog lookup. Runs ONLY for Components that structured parsing
-// could not identify (no bundleId, no publisher, no declaredCapabilities, and
-// identified === false). Applies the first exact match; never guesses.
-export function applyCatalog(
-  components: Component[],
-  entries: CatalogEntry[]
-): void {
-  for (const comp of components) {
-    if (!isUnlabeled(comp)) continue;
-    const entry = firstMatch(comp, entries);
-    if (!entry) continue; // no match -> stays unidentified
-
-    comp.name = entry.identity.displayName || comp.name;
-    if (entry.identity.publisher) comp.publisher = entry.identity.publisher;
-    if (entry.declaredCapabilities && entry.declaredCapabilities.length > 0) {
-      comp.declaredCapabilities = entry.declaredCapabilities;
-    }
-    comp.sourceRefs = [...comp.sourceRefs, `catalog:${entry.identity.displayName}`];
-    comp.identified = true;
+export function loadCatalog(catalogPath: string): Catalog {
+  const data = readJsonFile<{ agents?: AgentEntry[] }>(catalogPath);
+  const agents = Array.isArray(data?.agents) ? data!.agents! : [];
+  // Normalize the match fields once so matching is plain set/substring lookups.
+  for (const a of agents) {
+    a.names = (a.names || []).map(normalize);
+    a.binaries = (a.binaries || []).map(normalize);
+    a.bundleIds = (a.bundleIds || []).map((s) => s.toLowerCase());
+    a.tokens = (a.tokens || []).map((s) => s.toLowerCase());
   }
+  return { agents };
 }
 
-function isUnlabeled(c: Component): boolean {
-  return (
-    !c.identified &&
-    !c.bundleId &&
-    !c.publisher &&
-    (!c.declaredCapabilities || c.declaredCapabilities.length === 0)
-  );
+// Lowercase and drop a trailing .app/.exe so "Claude.app" and "claude.exe" both
+// compare as "claude".
+function normalize(s: string): string {
+  return (s || "").trim().toLowerCase().replace(/\.(app|exe)$/i, "");
 }
 
-function firstMatch(
-  c: Component,
-  entries: CatalogEntry[]
-): CatalogEntry | undefined {
-  for (const e of entries) {
-    if (matches(c, e.match)) return e;
+function basename(p: string): string {
+  if (!p) return "";
+  return normalize(path.basename(p));
+}
+
+// Exact allowlist match: return the first agent entry a component matches, or
+// undefined. All tests are equality / set-membership / exact substring — never
+// fuzzy scoring.
+export function matchAgent(c: Component, catalog: Catalog): AgentEntry | undefined {
+  const name = normalize(c.name);
+  const bundle = (c.bundleId || "").toLowerCase();
+  // For an MCP server, `path` is the host's config file (e.g. ~/.cursor/mcp.json)
+  // and the source ref names it too — matching tokens against those would
+  // misattribute every server to its host app. So an MCP server is matched only
+  // by its own name and launch command; path/label token matching is skipped.
+  const isMcp = c.installMethod === "mcp_config";
+  const base = normalize(c.binaryName || (isMcp ? "" : basename(c.path)));
+  const pathLc = isMcp ? "" : (c.path || "").toLowerCase();
+  // Launch/login items carry their reverse-DNS label as the name and often in
+  // the source ref; check both against tokens.
+  const label = isMcp ? "" : `${name} ${(c.sourceRefs || []).join(" ")}`.toLowerCase();
+
+  for (const a of catalog.agents) {
+    if (name && a.names.includes(name)) return a;
+    if (base && (a.binaries.includes(base) || a.names.includes(base))) return a;
+    if (bundle && a.bundleIds.includes(bundle)) return a;
+    for (const t of a.tokens) {
+      if (t && (pathLc.includes(t) || label.includes(t))) return a;
+    }
   }
   return undefined;
 }
 
-// Every non-null field in the match block must match. An all-null match block
-// matches nothing (guarded), so a lazy entry can't sweep in everything.
-function matches(c: Component, m: CatalogMatch): boolean {
-  const tests: boolean[] = [];
-  if (m.bundleId != null) {
-    tests.push((c.bundleId || "").toLowerCase() === m.bundleId.toLowerCase());
+// A component belongs in the report if it is a declared MCP server (in scope by
+// definition) or it matches the agent allowlist.
+export function isInScope(c: Component, catalog: Catalog): boolean {
+  return c.installMethod === "mcp_config" || !!matchAgent(c, catalog);
+}
+
+// Apply a catalog entry's identity to a matched component: set the canonical
+// display name, publisher, and declared capabilities, and mark it identified.
+export function applyAgentIdentity(c: Component, entry: AgentEntry): void {
+  c.name = entry.displayName || c.name;
+  // The catalog's publisher is the authoritative product vendor; it takes
+  // precedence over an install-channel string like "npm (global)".
+  if (entry.publisher) c.publisher = entry.publisher;
+  if (entry.declaredCapabilities && entry.declaredCapabilities.length > 0) {
+    c.declaredCapabilities = entry.declaredCapabilities;
   }
-  if (m.pathContains != null) {
-    tests.push((c.path || "").toLowerCase().includes(m.pathContains.toLowerCase()));
-  }
-  if (m.nameExact != null) {
-    tests.push((c.name || "").toLowerCase() === m.nameExact.toLowerCase());
-  }
-  if (tests.length === 0) return false; // no criteria -> never matches
-  return tests.every(Boolean);
+  c.sourceRefs = [...c.sourceRefs, `catalog:${entry.displayName}`];
+  c.identified = true;
 }

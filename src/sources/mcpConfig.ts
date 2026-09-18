@@ -97,6 +97,9 @@ function parseClient(cfg: ClientConfig): Component[] {
         name: serverName,
         installMethod: "mcp_config",
         path: resolvedPath,
+        // The command the server launches under (e.g. "npx", "node", or an
+        // absolute binary's name).
+        binaryName: command ? path.basename(command) : undefined,
         firstSeen,
         sourceRefs: [`mcp_config:${abs}`],
         // A server the client explicitly declares by name is identified: the

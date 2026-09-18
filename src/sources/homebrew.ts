@@ -50,6 +50,7 @@ export function collectHomebrew(): SourceResult {
         name,
         installMethod: "brew",
         path: optPath,
+        binaryName: f.name || name,
         version,
         // The tap is the publishing source; recording it both documents
         // provenance and marks the component as identified via structured

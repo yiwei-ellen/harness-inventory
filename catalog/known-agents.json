@@ -1,30 +1,374 @@
 {
-  "$comment": "Community-maintained catalog of AI agents, MCP servers, and agent harnesses. Public domain (CC0) — see catalog/LICENSE. Consulted ONLY for components that structured parsing could not identify (no bundleId, no publisher, no declaredCapabilities). A `match` block matches when every non-null field it lists matches the component: pathContains is a case-insensitive substring test on the resolved path; bundleId and nameExact are exact (case-insensitive) equality. No match means the component stays unidentified; entries never guess.",
-  "version": 1,
-  "entries": [
+  "$comment": "Allowlist of known AI agents, MCP servers, and agent harnesses. Public domain (CC0) — see catalog/LICENSE. This catalog decides what belongs in the report: a discovered component is shown only if it matches an entry here (or was declared as an MCP server). Matching is exact / set-membership only — no fuzzy scoring. A component matches an entry when any of: its name equals one of `names` (case-insensitive, with a .app/.exe suffix ignored); its executable basename equals one of `binaries`; its bundle id equals one of `bundleIds`; or one of `tokens` appears as a substring of its path or launch-item label. `tokens` are deliberately specific (publisher.product style) so a generic word can't sweep in unrelated software. Entries are seeded from a curated list of agent process names and mapped to their macOS equivalents; correct or extend via PR.",
+  "version": 2,
+  "agents": [
     {
-      "match": { "bundleId": null, "pathContains": "openclaw", "nameExact": null },
-      "identity": { "displayName": "OpenClaw", "publisher": "example", "homepage": "https://example.com" },
+      "displayName": "Claude",
+      "publisher": "Anthropic",
+      "names": ["claude", "claude desktop", "claude code"],
+      "binaries": ["claude", "claude-code"],
+      "bundleIds": ["com.anthropic.claudefordesktop"],
+      "tokens": ["anthropic.claude", "claude-code"],
       "declaredCapabilities": []
     },
     {
-      "match": { "bundleId": null, "pathContains": "zeroclaw", "nameExact": null },
-      "identity": { "displayName": "ZeroClaw", "publisher": "community", "homepage": "https://github.com/zeroclaw/zeroclaw" },
+      "displayName": "ChatGPT",
+      "publisher": "OpenAI",
+      "names": ["chatgpt", "chatgpt classic"],
+      "binaries": ["chatgpt"],
+      "bundleIds": ["com.openai.chat"],
+      "tokens": ["openai.chat"],
       "declaredCapabilities": []
     },
     {
-      "match": { "bundleId": null, "pathContains": null, "nameExact": "qwen-code" },
-      "identity": { "displayName": "Qwen Code", "publisher": "Alibaba (Qwen)", "homepage": "https://github.com/QwenLM/qwen-code" },
+      "displayName": "Codex",
+      "publisher": "OpenAI",
+      "names": ["codex"],
+      "binaries": ["codex"],
+      "bundleIds": [],
+      "tokens": ["openai.codex"],
       "declaredCapabilities": []
     },
     {
-      "match": { "bundleId": null, "pathContains": null, "nameExact": "pi-coding-agent" },
-      "identity": { "displayName": "Pi Coding Agent", "publisher": "community", "homepage": "" },
+      "displayName": "Ollama",
+      "publisher": "Ollama",
+      "names": ["ollama"],
+      "binaries": ["ollama"],
+      "bundleIds": [],
+      "tokens": ["ollama"],
       "declaredCapabilities": []
     },
     {
-      "match": { "bundleId": null, "pathContains": "nanobot", "nameExact": null },
-      "identity": { "displayName": "Nanobot", "publisher": "community", "homepage": "" },
+      "displayName": "Poe",
+      "publisher": "Quora",
+      "names": ["poe"],
+      "binaries": [],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Qwen Code",
+      "publisher": "Alibaba (Qwen)",
+      "names": ["qwen", "qwen code", "qwen code desktop"],
+      "binaries": ["qwen", "qwen-code"],
+      "bundleIds": [],
+      "tokens": ["qwen"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Pi Coding Agent",
+      "publisher": "community",
+      "names": ["pi coding agent"],
+      "binaries": ["pi-coding-agent"],
+      "bundleIds": [],
+      "tokens": ["pi-coding-agent"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Cursor",
+      "publisher": "Anysphere",
+      "names": ["cursor"],
+      "binaries": ["cursor"],
+      "bundleIds": ["com.todesktop.230313mzl4w4u92"],
+      "tokens": ["cursor"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "GitHub Copilot",
+      "publisher": "GitHub",
+      "names": ["copilot"],
+      "binaries": ["copilot"],
+      "bundleIds": [],
+      "tokens": ["copilot"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "GitHub",
+      "publisher": "GitHub",
+      "names": ["github"],
+      "binaries": [],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Nanobot",
+      "publisher": "community",
+      "names": ["nanobot"],
+      "binaries": ["nanobot"],
+      "bundleIds": [],
+      "tokens": ["nanobot"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "ZeroClaw",
+      "publisher": "community",
+      "names": ["zeroclaw"],
+      "binaries": ["zeroclaw"],
+      "bundleIds": [],
+      "tokens": ["zeroclaw"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "OpenCode",
+      "publisher": "community",
+      "names": ["opencode"],
+      "binaries": ["opencode"],
+      "bundleIds": [],
+      "tokens": ["opencode"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "ClawPilot",
+      "publisher": "community",
+      "names": ["clawpilot"],
+      "binaries": ["clawpilot"],
+      "bundleIds": [],
+      "tokens": ["clawpilot"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Microsoft Scout",
+      "publisher": "Microsoft",
+      "names": ["microsoft scout"],
+      "binaries": [],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Antigravity",
+      "publisher": "Google",
+      "names": ["antigravity", "antigravity ide"],
+      "binaries": ["antigravity", "agy"],
+      "bundleIds": [],
+      "tokens": ["antigravity"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Windsurf",
+      "publisher": "Codeium",
+      "names": ["windsurf"],
+      "binaries": ["windsurf"],
+      "bundleIds": ["com.exafunction.windsurf"],
+      "tokens": ["windsurf", "codeium.windsurf"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Cortex",
+      "publisher": "community",
+      "names": ["cortex", "cortex code"],
+      "binaries": ["cortex"],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Goose",
+      "publisher": "Block",
+      "names": ["goose"],
+      "binaries": ["goose"],
+      "bundleIds": [],
+      "tokens": ["block.goose"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Hermes",
+      "publisher": "community",
+      "names": ["hermes", "hermes agent"],
+      "binaries": ["hermes"],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Junie",
+      "publisher": "JetBrains",
+      "names": ["junie"],
+      "binaries": ["junie"],
+      "bundleIds": [],
+      "tokens": ["junie"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Perplexity",
+      "publisher": "Perplexity AI",
+      "names": ["perplexity", "perplexity ai"],
+      "binaries": ["perplexity"],
+      "bundleIds": ["ai.perplexity.mac"],
+      "tokens": ["perplexity"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Warp",
+      "publisher": "Warp",
+      "names": ["warp"],
+      "binaries": ["warp"],
+      "bundleIds": ["dev.warp.Warp-Stable"],
+      "tokens": ["dev.warp"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Trae",
+      "publisher": "ByteDance",
+      "names": ["trae"],
+      "binaries": ["trae"],
+      "bundleIds": [],
+      "tokens": ["trae"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Kiro",
+      "publisher": "Amazon",
+      "names": ["kiro"],
+      "binaries": ["kiro", "kiro-cli"],
+      "bundleIds": [],
+      "tokens": ["kiro"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Kilo Code",
+      "publisher": "community",
+      "names": ["kilo"],
+      "binaries": ["kilo"],
+      "bundleIds": [],
+      "tokens": ["kilo"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Cline",
+      "publisher": "Cline",
+      "names": ["cline"],
+      "binaries": ["cline"],
+      "bundleIds": [],
+      "tokens": ["cline"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Devin",
+      "publisher": "Cognition",
+      "names": ["devin"],
+      "binaries": ["devin"],
+      "bundleIds": [],
+      "tokens": ["devin"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Kimi",
+      "publisher": "Moonshot AI",
+      "names": ["kimi"],
+      "binaries": ["kimi"],
+      "bundleIds": [],
+      "tokens": ["kimi"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Amp",
+      "publisher": "Sourcegraph",
+      "names": ["amp"],
+      "binaries": ["amp"],
+      "bundleIds": [],
+      "tokens": ["sourcegraph.amp"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Omp",
+      "publisher": "community",
+      "names": ["omp"],
+      "binaries": ["omp"],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Buzz",
+      "publisher": "community",
+      "names": ["buzz", "buzz desktop"],
+      "binaries": ["buzz-desktop"],
+      "bundleIds": [],
+      "tokens": ["buzz-desktop"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "zcode",
+      "publisher": "community",
+      "names": ["zcode"],
+      "binaries": ["zcode"],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "qclaw",
+      "publisher": "community",
+      "names": ["qclaw"],
+      "binaries": ["qclaw"],
+      "bundleIds": [],
+      "tokens": ["qclaw"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Grok",
+      "publisher": "xAI",
+      "names": ["grok", "grok bot"],
+      "binaries": ["grok"],
+      "bundleIds": [],
+      "tokens": ["xai.grok"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Agent",
+      "publisher": "unknown",
+      "names": ["agent"],
+      "binaries": [],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Azure AI Foundry Local",
+      "publisher": "Microsoft",
+      "names": ["foundry", "foundry local"],
+      "binaries": ["foundry", "foundrylocald"],
+      "bundleIds": [],
+      "tokens": ["foundrylocal"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "LM Studio",
+      "publisher": "Element Labs",
+      "names": ["lm studio"],
+      "binaries": ["lm-studio", "lmstudio"],
+      "bundleIds": ["ai.elementlabs.lmstudio"],
+      "tokens": ["lmstudio"],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Bionic",
+      "publisher": "community",
+      "names": ["bionic"],
+      "binaries": ["bionic"],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "Node-based agent",
+      "publisher": "unknown",
+      "names": ["node"],
+      "binaries": [],
+      "bundleIds": [],
+      "tokens": [],
+      "declaredCapabilities": []
+    },
+    {
+      "displayName": "OpenClaw",
+      "publisher": "example",
+      "names": ["openclaw"],
+      "binaries": ["openclaw"],
+      "bundleIds": [],
+      "tokens": ["openclaw"],
       "declaredCapabilities": []
     }
   ]

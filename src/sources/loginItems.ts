@@ -38,6 +38,7 @@ export function collectLoginItems(): SourceResult {
         name: name.trim(),
         installMethod: "launch_item",
         path: p,
+        binaryName: p ? p.replace(/\/$/, "").split("/").pop() : undefined,
         firstSeen: p && pathExists(p) ? fileFirstSeen(p) : "",
         sourceRefs: [`login_item:${name.trim()}`],
         identified: false,

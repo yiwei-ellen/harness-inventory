@@ -40,6 +40,7 @@ export function collectNpmGlobal(): SourceResult {
         name,
         installMethod: "npm",
         path: pkgPath,
+        binaryName: name,
         version,
         // Named authoritatively by the npm global registry -> identified via
         // structured parsing; catalog lookup is skipped.

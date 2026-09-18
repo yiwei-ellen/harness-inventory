@@ -78,13 +78,19 @@ export function renderTable(components: Component[]): string {
   const nameCells = rows.map(
     (r) => (r.indent ? "  └ " : "") + sanitizeForTerminal(r.c.name)
   );
+  const binaryCells = rows.map((r) =>
+    sanitizeForTerminal(r.c.binaryName || "—")
+  );
   const nameWidth = Math.max(4, ...nameCells.map((s) => s.length)) + 2;
+  const binaryWidth =
+    Math.max("BINARY".length, ...binaryCells.map((s) => s.length)) + 2;
   const methodWidth = 14;
   const signWidth = 12;
   const statusWidth = 14;
 
   const header =
     pad("NAME", nameWidth) +
+    pad("BINARY", binaryWidth) +
     pad("INSTALLED VIA", methodWidth) +
     pad("SIGNED", signWidth) +
     pad("STATUS", statusWidth) +
@@ -94,6 +100,7 @@ export function renderTable(components: Component[]): string {
   rows.forEach((r, i) => {
     lines.push(
       pad(nameCells[i], nameWidth) +
+        pad(binaryCells[i], binaryWidth) +
         pad(methodLabel(r.c.installMethod), methodWidth) +
         pad(signingLabel(r.c.signingStatus), signWidth) +
         pad(idLabel(r.c), statusWidth) +
@@ -106,7 +113,7 @@ export function renderTable(components: Component[]): string {
   const unidentified = total - identified;
   lines.push("");
   lines.push(
-    `${total} component${total === 1 ? "" : "s"} found · ${identified} identified · ${unidentified} unidentified`
+    `${total} agent${total === 1 ? "" : "s"} found · ${identified} identified · ${unidentified} unidentified`
   );
 
   return lines.join("\n");
