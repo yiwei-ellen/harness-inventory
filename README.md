@@ -55,7 +55,7 @@ Not every guest carries the same paperwork, and we're not going to pretend other
 
 **Notarized** is a step further, but it only applies to things that came in through Apple's front door — downloaded `.app` bundles, mostly. Something installed via Homebrew or npm never passes through that checkpoint at all, so asking whether it's "notarized" doesn't really make sense for it — not a fail, just not applicable. We show `—`, not a fake pass or a scary red flag.
 
-Beyond that, identification comes from an open, community-maintained catalog — not a single checkmark, but a few honest signals side by side. You decide what they add up to; we just show you the pieces, no risk score attached.
+Beyond that, identification comes from an open, community-maintained catalog — not a single checkmark, but a few honest signals side by side. You decide what they add up to; we just show you the pieces, no scoring attached.
 
 ## 🤷 Run into a stranger?
 
@@ -63,7 +63,7 @@ If a scan turns up something unidentified, you'll be asked once — and only onc
 
 ## What this is not
 
-- **Not a security or antivirus tool.** No risk scores, no red alerts, no making your laptop feel like a crime scene. Just an honest guest list.
+- **Not a security or antivirus tool.** No scores, no red alerts, no making your laptop feel like a crime scene. Just an honest guest list.
 - **Not a background service.** It shows up when you call it, and only then.
 - **Not a way to block or control agents.** This tool checks IDs — it doesn't run the door.
 
