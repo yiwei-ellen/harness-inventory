@@ -42,14 +42,14 @@ export function collectHomebrew(): SourceResult {
     if (!name) continue;
     const version: string | undefined =
       f?.installed?.[0]?.version || f?.versions?.stable || undefined;
-    // Canonical install location for a formula's current version.
+    // Canonical install location for a formula's current version (the opt link
+    // is stable across version bumps).
     const optPath = path.join(prefix, "opt", f.name || name);
-    const linkPath = pathExists(optPath) ? optPath : optPath; // opt link is canonical even if bin varies
     components.push(
       makeComponent({
         name,
         installMethod: "brew",
-        path: linkPath,
+        path: optPath,
         version,
         // The tap is the publishing source; recording it both documents
         // provenance and marks the component as identified via structured
@@ -75,7 +75,6 @@ export function collectHomebrew(): SourceResult {
         path: path.join(prefix, "Caskroom", token),
         version,
         publisher: c.tap ? `homebrew tap ${c.tap}` : "homebrew (cask)",
-        bundleId: undefined,
         firstSeen: fileFirstSeen(path.join(prefix, "Caskroom", token)),
         sourceRefs: [`brew:cask:${token}`],
         identified: true,

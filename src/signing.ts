@@ -12,13 +12,10 @@ export interface SigningInfo {
 //
 // Mapping:
 //   - codesign reports it is not signed    -> unsigned
-//   - codesign reports "not ... Mach-O"    -> unknown (not a signable object)
 //   - codesign succeeds, spctl notarized   -> signed_notarized
 //   - codesign succeeds, spctl not notar.  -> signed_unnotarized
-//   - codesign succeeds, spctl unavailable -> signed_unnotarized (best-effort)
-//
-// Off-macOS (no codesign binary) everything resolves to unknown, so the tool
-// never crashes on non-macOS hosts even though collection targets macOS.
+//   - anything else (not a signable object, codesign missing off-macOS, or an
+//     unclear failure) -> unknown, so we never overclaim or crash off-macOS.
 export function inspectSigning(binPath: string): SigningInfo {
   if (!binPath || !pathExists(binPath)) {
     return { signingStatus: "unknown" };
@@ -29,23 +26,11 @@ export function inspectSigning(binPath: string): SigningInfo {
   const csText = `${cs.stdout}\n${cs.stderr}`;
 
   if (!cs.ok) {
+    // The only failure we can classify confidently is an unsigned code object;
+    // every other failure is "not determinable" -> unknown.
     if (/is not signed at all|code object is not signed/i.test(csText)) {
       return { signingStatus: "unsigned" };
     }
-    if (
-      /not recognized|is not a|does not exist|No such file|bundle format|not an? (?:Mach-O|bundle)/i.test(
-        csText
-      )
-    ) {
-      // Not a signable code object (e.g. a plain script). Signing does not
-      // apply — report unknown rather than unsigned.
-      return { signingStatus: "unknown" };
-    }
-    // codesign itself is missing (off-macOS) or some other failure.
-    if (/ENOENT|command not found|spawn codesign/i.test(cs.stderr)) {
-      return { signingStatus: "unknown" };
-    }
-    // Unclear failure: do not overclaim.
     return { signingStatus: "unknown" };
   }
 
