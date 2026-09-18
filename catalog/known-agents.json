@@ -1,0 +1,31 @@
+{
+  "$comment": "Community-maintained catalog of AI agents, MCP servers, and agent harnesses. Public domain (CC0) — see catalog/LICENSE. Consulted ONLY for components that structured parsing could not identify (no bundleId, no publisher, no declaredCapabilities). A `match` block matches when every non-null field it lists matches the component: pathContains is a case-insensitive substring test on the resolved path; bundleId and nameExact are exact (case-insensitive) equality. No match means the component stays unidentified; entries never guess.",
+  "version": 1,
+  "entries": [
+    {
+      "match": { "bundleId": null, "pathContains": "openclaw", "nameExact": null },
+      "identity": { "displayName": "OpenClaw", "publisher": "example", "homepage": "https://example.com" },
+      "declaredCapabilities": []
+    },
+    {
+      "match": { "bundleId": null, "pathContains": "zeroclaw", "nameExact": null },
+      "identity": { "displayName": "ZeroClaw", "publisher": "community", "homepage": "https://github.com/zeroclaw/zeroclaw" },
+      "declaredCapabilities": []
+    },
+    {
+      "match": { "bundleId": null, "pathContains": null, "nameExact": "qwen-code" },
+      "identity": { "displayName": "Qwen Code", "publisher": "Alibaba (Qwen)", "homepage": "https://github.com/QwenLM/qwen-code" },
+      "declaredCapabilities": []
+    },
+    {
+      "match": { "bundleId": null, "pathContains": null, "nameExact": "pi-coding-agent" },
+      "identity": { "displayName": "Pi Coding Agent", "publisher": "community", "homepage": "" },
+      "declaredCapabilities": []
+    },
+    {
+      "match": { "bundleId": null, "pathContains": "nanobot", "nameExact": null },
+      "identity": { "displayName": "Nanobot", "publisher": "community", "homepage": "" },
+      "declaredCapabilities": []
+    }
+  ]
+}

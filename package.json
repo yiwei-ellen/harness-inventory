@@ -1,0 +1,27 @@
+{
+  "name": "agent-inventory",
+  "version": "1.0.0",
+  "description": "Read-only, on-demand CLI that inventories AI agents, MCP servers, and agent harnesses installed on a macOS machine.",
+  "license": "Apache-2.0",
+  "bin": {
+    "agent-inventory": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "catalog/known-agents.json",
+    "catalog/LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build",
+    "scan": "npm run build && node dist/index.js scan",
+    "test": "npm run build && node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  }
+}
