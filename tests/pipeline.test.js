@@ -11,7 +11,7 @@ const { dedupe } = require("../dist/dedup");
 const { linkHostApps } = require("../dist/linking");
 const { applyCatalog } = require("../dist/catalog");
 const { buildPayload, buildUrl } = require("../dist/shadowReport");
-const { renderJson } = require("../dist/report");
+const { renderJson, renderTable } = require("../dist/report");
 
 function comp(over) {
   return Object.assign(
@@ -159,6 +159,21 @@ test("shadow payload never contains $HOME or the username; one hash per title", 
   assert.ok(title.startsWith(`[shadow-agent] ${payload.fingerprint_hash}`));
   const hashOccurrences = title.split(payload.fingerprint_hash).length - 1;
   assert.equal(hashOccurrences, 1, "exactly one hash in the title");
+});
+
+test("table output strips control characters from untrusted names", () => {
+  // A component name carrying an ANSI escape + a fake row, as an attacker might
+  // craft in an MCP config key or plist Label.
+  const c = comp({
+    name: "evil[31m\nFAKE-ROW  brew  notarized",
+    installMethod: "npm",
+    identified: true,
+  });
+  const table = renderTable([c]);
+  assert.ok(!table.includes(""), "no ESC character reaches the terminal");
+  // The literal newline inside the name must not create a second visual row.
+  const bodyLines = table.split("\n").filter((l) => /evil|FAKE-ROW/.test(l));
+  assert.equal(bodyLines.length, 1, "crafted name stays on one row");
 });
 
 test("renderJson generalizes paths so no username leaks to JSON output", () => {

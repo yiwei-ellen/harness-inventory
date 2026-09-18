@@ -17,7 +17,7 @@ export function catalogUpdateUrl(): string {
 export async function updateCatalog(localPath: string): Promise<boolean> {
   console.log(`[network] Fetching latest catalog from: ${CATALOG_RAW_URL}`);
   try {
-    const body = await httpGet(CATALOG_RAW_URL);
+    const body = await httpGet(CATALOG_RAW_URL, 0);
     // Validate it parses before overwriting, so a bad response can't corrupt the
     // shipped catalog.
     JSON.parse(body);
@@ -34,7 +34,14 @@ export async function updateCatalog(localPath: string): Promise<boolean> {
   }
 }
 
-function httpGet(url: string): Promise<string> {
+// HTTPS-only. Redirects are followed only to other https:// URLs and capped in
+// depth (a redirect loop or a downgrade to http can't run away). The response
+// body is bounded so a hostile or broken endpoint can't exhaust memory. The
+// catalog is a few KB; the caps are generous headroom, not a real limit.
+const MAX_REDIRECTS = 3;
+const MAX_BODY_BYTES = 5 * 1024 * 1024;
+
+function httpGet(url: string, redirects: number): Promise<string> {
   return new Promise((resolve, reject) => {
     const req = https.get(url, { timeout: 15000 }, (res) => {
       if (
@@ -43,9 +50,17 @@ function httpGet(url: string): Promise<string> {
         res.statusCode < 400 &&
         res.headers.location
       ) {
-        // Follow a single redirect (raw.githubusercontent may 30x).
         res.resume();
-        httpGet(res.headers.location).then(resolve, reject);
+        if (redirects >= MAX_REDIRECTS) {
+          reject(new Error("too many redirects"));
+          return;
+        }
+        const next = new URL(res.headers.location, url);
+        if (next.protocol !== "https:") {
+          reject(new Error(`refusing non-https redirect to ${next.protocol}`));
+          return;
+        }
+        httpGet(next.toString(), redirects + 1).then(resolve, reject);
         return;
       }
       if (res.statusCode !== 200) {
@@ -54,8 +69,16 @@ function httpGet(url: string): Promise<string> {
         return;
       }
       let data = "";
+      let bytes = 0;
       res.setEncoding("utf8");
-      res.on("data", (c) => (data += c));
+      res.on("data", (c: string) => {
+        bytes += Buffer.byteLength(c);
+        if (bytes > MAX_BODY_BYTES) {
+          req.destroy(new Error("response exceeded size limit"));
+          return;
+        }
+        data += c;
+      });
       res.on("end", () => resolve(data));
     });
     req.on("timeout", () => req.destroy(new Error("request timed out")));

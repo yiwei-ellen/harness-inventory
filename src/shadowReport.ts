@@ -6,6 +6,7 @@ import {
   sha256File,
   fileSize,
   macosVersion,
+  sanitizeForTerminal,
 } from "./util";
 
 // Pinned project repository for shadow-agent issue drafts. Issues open in the
@@ -144,7 +145,9 @@ export async function runShadowReport(
     );
     console.log("Nothing is submitted — each opens prefilled for you to review and submit.\n");
     drafts.forEach((d, i) => {
-      console.log(`--- Report ${i + 1} of ${drafts.length}: ${d.component.name} ---`);
+      console.log(
+        `--- Report ${i + 1} of ${drafts.length}: ${sanitizeForTerminal(d.component.name)} ---`
+      );
       console.log(JSON.stringify(d.payload, null, 2));
       console.log("");
     });
@@ -169,7 +172,7 @@ export async function runShadowReport(
     if (opts.noBrowser) {
       console.log("\nOpen each URL yourself, at your own pace:\n");
       drafts.forEach((d, i) => {
-        console.log(`[${i + 1}] ${d.component.name}`);
+        console.log(`[${i + 1}] ${sanitizeForTerminal(d.component.name)}`);
         console.log(d.url);
         console.log("");
       });
@@ -180,7 +183,9 @@ export async function runShadowReport(
     // once.
     for (let i = 0; i < drafts.length; i++) {
       const d = drafts[i];
-      console.log(`\nOpening report ${i + 1} of ${drafts.length}: ${d.component.name}`);
+      console.log(
+        `\nOpening report ${i + 1} of ${drafts.length}: ${sanitizeForTerminal(d.component.name)}`
+      );
       opts.openFn(d.url);
       if (i < drafts.length - 1) {
         await ask(rl, "Press Enter to open the next draft… ");

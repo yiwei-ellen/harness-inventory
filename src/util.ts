@@ -41,6 +41,23 @@ export function homeDir(): string {
   return os.homedir();
 }
 
+// Strip control characters (C0/C1, including ESC) from a string before printing
+// it to the terminal. Names and paths come from untrusted sources — config
+// files, plist labels, process args, the fetched catalog — and a crafted value
+// with ANSI escapes could otherwise spoof or corrupt the report. JSON output is
+// unaffected (JSON.stringify already escapes these); this is display-only.
+export function sanitizeForTerminal(s: string): string {
+  // Remove C0 (0x00-0x1F) and C1/DEL (0x7F-0x9F) control characters. Written
+  // with numeric comparisons so the source itself holds no control bytes.
+  let out = "";
+  for (const ch of s || "") {
+    const code = ch.codePointAt(0) ?? 0;
+    if (code <= 0x1f || (code >= 0x7f && code <= 0x9f)) continue;
+    out += ch;
+  }
+  return out;
+}
+
 // Replace the current user's home directory prefix with "~". Never emits the
 // literal username. Used for both display and shadow-report payloads.
 export function generalizePath(p: string): string {

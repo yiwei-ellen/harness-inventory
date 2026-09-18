@@ -1,5 +1,5 @@
 import { Component, SigningStatus } from "./types";
-import { generalizePath, componentIdentifier } from "./util";
+import { generalizePath, componentIdentifier, sanitizeForTerminal } from "./util";
 
 // Human-readable signing string. Reported as plain fact — no color coding, no
 // ranking. "—" means signing does not apply / is not determinable.
@@ -76,7 +76,7 @@ export function renderTable(components: Component[]): string {
   for (const c of rest) rows.push({ indent: false, c });
 
   const nameCells = rows.map(
-    (r) => (r.indent ? "  └ " : "") + r.c.name
+    (r) => (r.indent ? "  └ " : "") + sanitizeForTerminal(r.c.name)
   );
   const nameWidth = Math.max(4, ...nameCells.map((s) => s.length)) + 2;
   const methodWidth = 14;
