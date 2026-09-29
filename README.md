@@ -30,22 +30,7 @@ The richest results come from a normal user account — the scan reads what
 *your* login can see (your MCP configs, your `~/Applications`, your login
 items). It never asks for elevated privileges.
 
-## Install
-
-No install step needed — `npx` fetches and runs the latest version on demand:
-
-```bash
-npx agent-inventory scan
-```
-
-Prefer a permanent command? Install it globally:
-
-```bash
-npm install -g agent-inventory
-agent-inventory scan
-```
-
-Or run it from a clone:
+## Quick start
 
 ```bash
 git clone https://github.com/yiwei-ellen/harness-inventory
@@ -54,31 +39,132 @@ npm install && npm run build
 node dist/index.js scan
 ```
 
+That's it: it prints the report and exits, usually within a few seconds.
+Want a short command? Run `npm link` once in the repo, and `agent-inventory scan`
+works from anywhere.
+
+> **Not on npm (yet).** The name `agent-inventory` on the npm registry belongs to
+> an unrelated package by another author. Don't run `npx agent-inventory` expecting
+> this tool — for a tool about knowing what runs on your Mac, that would be an
+> unfortunate first step.
+
+To include macOS privacy permissions (Accessibility, Screen Recording, Full Disk
+Access), run it from a terminal that has Full Disk Access. Without it, the scan
+still works and says permissions weren't readable.
+
+## Reading the report
+
+The report has two parts: a **table** of every agent it found, then **details**
+for each one. Here's what it looks like (illustrative):
+
+```
+NAME                       BINARY              INSTALLED VIA   SIGNED      STATUS        FIRST SEEN
+Claude                     Claude              app bundle      notarized   identified    2026-02-14
+  └ github                 npx                 mcp config      —           identified    2026-03-02
+  └ Claude browser bridge  chrome-native-host  browser bridge  notarized   identified    2026-06-20
+    └ Claude               —                   browser ext     —           identified    2026-06-20
+Cursor                     Cursor              app bundle      notarized   identified    2026-01-02
+  └ filesystem             npx                 mcp config      —           identified    2026-01-02
+Claude Code                claude              on PATH         notarized   identified    2026-03-11
+  └ sentry                 —                   mcp config      —           identified    2026-04-09
+Ollama                     ollama              brew            signed      identified    2026-02-09
+
+9 agent-related components · 9 identified · 0 unidentified · 212 other apps or packages not shown (--all lists everything)
+
+DETAILS
+
+Claude Code  ·  on PATH  ·  ~/.local/share/claude/versions/2.0.0
+  Publisher     Developer ID Application: Anthropic PBC (Q6L2SF6YDW) · signing team matches the catalog
+  Inherits      when run in iTerm2: Full Disk Access
+  MCP servers   sentry (http · mcp.sentry.dev · passes header:Authorization)
+  Keeps on disk ~/.claude/projects   transcripts   212 MB · 1,402 files · changed 2026-09-29
+                ~/.claude/CLAUDE.md  instructions  4.1 KB · changed 2026-09-12
+  Running now   yes · underneath it: zsh, git push, node @modelcontextprotocol/server-github
+
+Codex CLI  ·  not found installed on this Mac  ·  its config and data remain
+  Keeps on disk ~/.codex/sessions    transcripts   38 MB · 211 files · changed 2026-07-30
+                ~/.codex/auth.json   credentials   1.2 KB · changed 2026-07-30
+```
+
+### The table
+
+| Column | What it means |
+| --- | --- |
+| `NAME` | The agent, or an MCP server / browser extension indented under the agent that uses it. |
+| `BINARY` | The executable actually behind the row: the app's binary, the command you type, or the command an MCP server launches (`npx`, `node`, `docker`). |
+| `INSTALLED VIA` | How it got here: `app bundle`, `on PATH`, `npm`, `brew`, `pip`, `mcp config`, `launch item`, `browser bridge`, `browser ext`. |
+| `SIGNED` | `notarized`, `signed`, `unsigned`, or `—` when signing doesn't apply (scripts, packages, config entries). |
+| `STATUS` | `identified` when something vouches for its identity (a bundle ID, a registry, the catalog, a config that names it); otherwise `unidentified`. |
+| `FIRST SEEN` | When its files first appeared on disk (best-effort). |
+
+The last line counts what's shown and how many ordinary apps and packages were
+left out (`--all` lists them too).
+
+### The details
+
+Each known agent gets a block, with only the lines that have something to say:
+
+| Line | What it tells you |
+| --- | --- |
+| `Publisher` | Who signed it, and whether that signing team matches the one the catalog records for this agent. |
+| `Permissions` | macOS privacy permissions granted to it directly. |
+| `Inherits` | For command-line agents: permissions they get from the terminal you run them in. |
+| `MCP servers` | Tools it can call: transport, what each server launches or which host it talks to, and the *names* of keys it passes (never the values). |
+| `Browser` / `Bridges to` | The browser extension it talks to, and in which browsers. |
+| `Keeps on disk` | Transcripts, instructions, saved logins, models: where, how big, when last changed. Measured, never opened. |
+| `Running now` | Whether it's running, and what's running underneath it right now. |
+
+A block that says **not found installed on this Mac · its config and data
+remain** is an agent you've removed (or never installed) whose files are still
+here.
+
+### What to do with it
+
+Nothing in the report is a verdict; these are the lines worth a second look:
+
+- **An MCP server that `passes` a key** (`GITHUB_TOKEN`, `header:Authorization`)
+  holds a live credential any agent using it can exercise. Remove servers you
+  don't use from the client's config.
+- **`signing team differs from the catalog's record`** — check where you got
+  that copy. Vendors do change teams, but it's the first thing to rule out.
+- **`Inherits … Full Disk Access`** — every CLI agent you start in that terminal
+  can read your whole disk. Consider running agents from a terminal without it.
+- **`Accessibility` or `Screen Recording`** on an agent — it can see and drive
+  your screen. Revoke it in System Settings › Privacy & Security if that's a
+  surprise.
+- **`credentials` under `Keeps on disk`**, especially in a *not found installed*
+  block — a login left behind by an agent you no longer use. Delete it (or the
+  folder) if you're done with that agent.
+- **`transcripts`** — your conversations with that agent, stored locally. Good
+  to know they're there, and how big they've grown.
+
 ## Usage
+
+After `npm link` (or replace `agent-inventory` with `node dist/index.js`):
 
 ```bash
 # Walk the house and print the guest list
-npx agent-inventory scan
+agent-inventory scan
 
 # Machine-readable output — the full Component[] array
-npx agent-inventory scan --json > inventory.json
+agent-inventory scan --json > inventory.json
 
 # Print report URLs instead of opening a browser during the report flow
-npx agent-inventory scan --no-browser
+agent-inventory scan --no-browser
 
 # Refresh the local catalog from this repo before scanning (the only
 # network call this tool ever makes; off by default, announced before it runs)
-npx agent-inventory scan --update-catalog
+agent-inventory scan --update-catalog
 
 # Every app and package, not just the agent-related ones
-npx agent-inventory scan --all
+agent-inventory scan --all
 
 # Signing teams seen on this Mac that the catalog doesn't record yet —
 # a starting point for a catalog pull request (nothing is sent or written)
-npx agent-inventory catalog suggest
+agent-inventory catalog suggest
 
 # Everything the CLI understands
-npx agent-inventory scan --help
+agent-inventory scan --help
 ```
 
 ### Flags
@@ -119,41 +205,6 @@ every app and package the sources saw (slower, for the same reason).
 
 Piping the output (or using `--json`) is non-interactive: the report prompt
 below is skipped and no network action is taken.
-
-## Example output
-
-Only agents appear — the dozens of ordinary apps on the same machine are filtered out. The `BINARY` column shows the executable behind each row.
-
-```
-NAME                       BINARY              INSTALLED VIA   SIGNED      STATUS        FIRST SEEN
-Claude                     Claude              app bundle      notarized   identified    2026-02-14
-  └ github                 npx                 mcp config      —           identified    2026-03-02
-  └ Claude browser bridge  chrome-native-host  browser bridge  notarized   identified    2026-06-20
-    └ Claude               —                   browser ext     —           identified    2026-06-20
-Cursor                     Cursor              app bundle      notarized   identified    2026-01-02
-  └ filesystem             npx                 mcp config      —           identified    2026-01-02
-Claude Code                claude              on PATH         notarized   identified    2026-03-11
-  └ sentry                 —                   mcp config      —           identified    2026-04-09
-Ollama                     ollama              brew            signed      identified    2026-02-09
-
-9 agent-related components · 9 identified · 0 unidentified · 212 other apps or packages not shown (--all lists everything)
-
-DETAILS
-
-Claude Code  ·  on PATH  ·  ~/.local/share/claude/versions/2.0.0
-  Publisher     Developer ID Application: Anthropic PBC (Q6L2SF6YDW) · signing team matches the catalog
-  Inherits      when run in iTerm2: Full Disk Access
-  MCP servers   sentry (http · mcp.sentry.dev · passes header:Authorization)
-  Keeps on disk ~/.claude/projects   transcripts   212 MB · 1,402 files · changed 2026-09-29
-                ~/.claude/CLAUDE.md  instructions  4.1 KB · changed 2026-09-12
-  Running now   yes · underneath it: zsh, git push, node @modelcontextprotocol/server-github
-
-Codex CLI  ·  not found installed on this Mac  ·  its config and data remain
-  Keeps on disk ~/.codex/sessions    transcripts   38 MB · 211 files · changed 2026-07-30
-                ~/.codex/auth.json   credentials   1.2 KB · changed 2026-07-30
-```
-
-(Illustrative. Details list only the lines that have something to say.)
 
 ## 🪪 Trust, explained honestly
 
