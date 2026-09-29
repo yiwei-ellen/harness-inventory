@@ -4,6 +4,9 @@ import { SigningStatus } from "./types";
 export interface SigningInfo {
   signingStatus: SigningStatus;
   publisher?: string;
+  // Apple Developer team identifier, when the signature carries one. Ad-hoc
+  // and Apple platform binaries report "not set" and get none.
+  teamId?: string;
 }
 
 // Determine signing status for a resolved binary/bundle path by parsing the
@@ -35,17 +38,26 @@ export function inspectSigning(binPath: string): SigningInfo {
   }
 
   const publisher = parsePublisher(csText);
+  const teamId = parseTeamId(csText);
 
   // Signed; ask Gatekeeper whether it is notarized.
   const sp = safeExec("spctl", ["-a", "-vv", binPath]);
   const spText = `${sp.stdout}\n${sp.stderr}`;
 
   if (/source=Notarized|Notarized Developer ID/i.test(spText)) {
-    return { signingStatus: "signed_notarized", publisher };
+    return { signingStatus: "signed_notarized", publisher, teamId };
   }
 
   // Signed but not (or not verifiably) notarized.
-  return { signingStatus: "signed_unnotarized", publisher };
+  return { signingStatus: "signed_unnotarized", publisher, teamId };
+}
+
+// TeamIdentifier from codesign output. Apple team IDs are 10 uppercase
+// alphanumerics; anything else ("not set") is treated as absent.
+export function parseTeamId(text: string): string | undefined {
+  const team = text.match(/TeamIdentifier=([A-Za-z0-9]+)/);
+  if (team && /^[A-Z0-9]{10}$/.test(team[1])) return team[1];
+  return undefined;
 }
 
 // Extract a human-readable publisher from codesign output: prefer the leading

@@ -62,6 +62,23 @@ function merge(a: Component, b: Component): Component {
     ),
     running: primary.running || secondary.running,
     identified: primary.identified || secondary.identified,
+    teamId: primary.teamId ?? secondary.teamId,
+    executablePath: primary.executablePath ?? secondary.executablePath,
+    mcp: primary.mcp ?? secondary.mcp,
+    browser: mergeBrowser(primary.browser, secondary.browser),
+  };
+}
+
+function mergeBrowser(
+  a: Component["browser"],
+  b: Component["browser"]
+): Component["browser"] {
+  if (!a) return b;
+  if (!b) return a;
+  return {
+    browsers: uniq([...a.browsers, ...b.browsers]),
+    extensionIds: unionArr(a.extensionIds, b.extensionIds),
+    permissions: unionArr(a.permissions, b.permissions),
   };
 }
 
