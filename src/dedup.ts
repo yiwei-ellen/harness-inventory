@@ -63,6 +63,7 @@ function merge(a: Component, b: Component): Component {
     running: primary.running || secondary.running,
     identified: primary.identified || secondary.identified,
     teamId: primary.teamId ?? secondary.teamId,
+    binaryName: primary.binaryName ?? secondary.binaryName,
     executablePath: primary.executablePath ?? secondary.executablePath,
     mcp: primary.mcp ?? secondary.mcp,
     browser: mergeBrowser(primary.browser, secondary.browser),

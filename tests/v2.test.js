@@ -370,7 +370,9 @@ test("end to end against a simulated Mac home", () => {
   assert.equal(ext.name, "Claude", "localized name from the newest version folder");
   assert.equal(ext.version, "1.0.10");
   assert.ok(ext.browser.permissions.includes("nativeMessaging"));
-  assert.equal(comps.find((c) => c.name === "Dark Reader").agentRelated, false);
+  assert.equal(comps.find((c) => c.name === "Dark Reader"), undefined, "ordinary extension left out of the scan");
+  const all = JSON.parse(run(["scan", "--all", "--json"]));
+  assert.equal(all.find((c) => c.name === "Dark Reader").agentRelated, false, "--all keeps it, flagged");
 
   const text = run(["scan"]);
   assert.ok(!text.includes("SECRET"));

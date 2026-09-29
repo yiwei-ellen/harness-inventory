@@ -5,462 +5,1511 @@
     {
       "id": "anthropic.claude-desktop",
       "kind": "desktop-app",
-      "identity": { "displayName": "Claude", "publisher": "Anthropic", "homepage": "https://claude.ai/download" },
+      "identity": {
+        "displayName": "Claude",
+        "publisher": "Anthropic",
+        "homepage": "https://claude.ai/download"
+      },
       "detect": {
-        "bundleIds": ["com.anthropic.claudefordesktop"],
-        "appNames": ["Claude"],
-        "brewNames": ["claude"]
+        "bundleIds": [
+          "com.anthropic.claudefordesktop"
+        ],
+        "appNames": [
+          "Claude",
+          "Claude Desktop"
+        ],
+        "brewNames": [
+          "claude"
+        ],
+        "labelPrefixes": [
+          "com.anthropic"
+        ]
       },
       "signing": {
-        "teamIds": ["Q6L2SF6YDW"],
+        "teamIds": [
+          "Q6L2SF6YDW"
+        ],
         "evidence": "codesign Authority=Developer ID Application: Anthropic PBC (Q6L2SF6YDW) on Claude.app helpers"
       },
       "dataPaths": [
-        { "path": "~/Library/Application Support/Claude", "kind": "data" },
-        { "path": "~/Library/Logs/Claude", "kind": "logs" }
+        {
+          "path": "~/Library/Application Support/Claude",
+          "kind": "data"
+        },
+        {
+          "path": "~/Library/Logs/Claude",
+          "kind": "logs"
+        }
       ],
-      "declaredCapabilities": ["chat", "mcp-host"]
+      "declaredCapabilities": [
+        "chat",
+        "mcp-host"
+      ]
     },
     {
       "id": "anthropic.claude-code",
       "kind": "cli",
-      "identity": { "displayName": "Claude Code", "publisher": "Anthropic", "homepage": "https://claude.com/product/claude-code" },
+      "identity": {
+        "displayName": "Claude Code",
+        "publisher": "Anthropic",
+        "homepage": "https://claude.com/product/claude-code"
+      },
       "detect": {
-        "cliNames": ["claude"],
-        "npmPackages": ["@anthropic-ai/claude-code"],
-        "brewNames": ["claude-code"]
+        "cliNames": [
+          "claude"
+        ],
+        "npmPackages": [
+          "@anthropic-ai/claude-code"
+        ],
+        "brewNames": [
+          "claude-code"
+        ]
       },
       "signing": {
-        "teamIds": ["Q6L2SF6YDW"],
+        "teamIds": [
+          "Q6L2SF6YDW"
+        ],
         "evidence": "Anthropic PBC team (same as Claude.app); applies to the native build — npm installs are scripts and carry no signature"
       },
       "dataPaths": [
-        { "path": "~/.claude/projects", "kind": "transcripts" },
-        { "path": "~/.claude/history.jsonl", "kind": "history" },
-        { "path": "~/.claude/CLAUDE.md", "kind": "instructions" },
-        { "path": "~/.claude/file-history", "kind": "data" },
-        { "path": "~/.claude/todos", "kind": "data" },
-        { "path": "~/.claude.json", "kind": "config" },
-        { "path": "~/.claude/.credentials.json", "kind": "credentials" }
+        {
+          "path": "~/.claude/projects",
+          "kind": "transcripts"
+        },
+        {
+          "path": "~/.claude/history.jsonl",
+          "kind": "history"
+        },
+        {
+          "path": "~/.claude/CLAUDE.md",
+          "kind": "instructions"
+        },
+        {
+          "path": "~/.claude/file-history",
+          "kind": "data"
+        },
+        {
+          "path": "~/.claude/todos",
+          "kind": "data"
+        },
+        {
+          "path": "~/.claude.json",
+          "kind": "config"
+        },
+        {
+          "path": "~/.claude/.credentials.json",
+          "kind": "credentials"
+        }
       ],
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "anthropic.claude-browser-bridge",
       "kind": "browser-bridge",
-      "identity": { "displayName": "Claude browser bridge", "publisher": "Anthropic", "homepage": "https://claude.ai" },
+      "identity": {
+        "displayName": "Claude browser bridge",
+        "publisher": "Anthropic",
+        "homepage": "https://claude.ai"
+      },
       "detect": {
-        "nativeHostNames": ["com.anthropic.claude_browser_extension", "com.anthropic.claude_code_browser_extension"]
+        "nativeHostNames": [
+          "com.anthropic.claude_browser_extension",
+          "com.anthropic.claude_code_browser_extension"
+        ]
       },
       "signing": {
-        "teamIds": ["Q6L2SF6YDW"],
+        "teamIds": [
+          "Q6L2SF6YDW"
+        ],
         "evidence": "codesign Authority=Developer ID Application: Anthropic PBC (Q6L2SF6YDW) on Claude.app/Contents/Helpers/chrome-native-host"
       },
-      "declaredCapabilities": ["browser-control"]
+      "declaredCapabilities": [
+        "browser-control"
+      ]
     },
     {
       "id": "anthropic.claude-agent-sdk",
       "kind": "agent-framework",
-      "identity": { "displayName": "Claude Agent SDK", "publisher": "Anthropic", "homepage": "https://docs.claude.com" },
+      "identity": {
+        "displayName": "Claude Agent SDK",
+        "publisher": "Anthropic",
+        "homepage": "https://docs.claude.com"
+      },
       "detect": {
-        "npmPackages": ["@anthropic-ai/claude-agent-sdk"],
-        "pipPackages": ["claude-agent-sdk"]
+        "npmPackages": [
+          "@anthropic-ai/claude-agent-sdk"
+        ],
+        "pipPackages": [
+          "claude-agent-sdk"
+        ]
       }
     },
     {
       "id": "openai.chatgpt",
       "kind": "desktop-app",
-      "identity": { "displayName": "ChatGPT", "publisher": "OpenAI", "homepage": "https://chatgpt.com/download" },
+      "identity": {
+        "displayName": "ChatGPT",
+        "publisher": "OpenAI",
+        "homepage": "https://chatgpt.com/download"
+      },
       "detect": {
-        "bundleIds": ["com.openai.chat"],
-        "appNames": ["ChatGPT"],
-        "brewNames": ["chatgpt"]
+        "bundleIds": [
+          "com.openai.chat"
+        ],
+        "appNames": [
+          "ChatGPT",
+          "ChatGPT Classic"
+        ],
+        "brewNames": [
+          "chatgpt"
+        ],
+        "labelPrefixes": [
+          "com.openai.chat"
+        ]
       },
       "dataPaths": [
-        { "path": "~/Library/Application Support/com.openai.chat", "kind": "data" }
+        {
+          "path": "~/Library/Application Support/com.openai.chat",
+          "kind": "data"
+        }
       ],
-      "declaredCapabilities": ["chat"]
+      "declaredCapabilities": [
+        "chat"
+      ]
     },
     {
       "id": "openai.chatgpt-atlas",
       "kind": "agentic-browser",
-      "identity": { "displayName": "ChatGPT Atlas", "publisher": "OpenAI", "homepage": "https://chatgpt.com/atlas" },
-      "detect": { "appNames": ["ChatGPT Atlas"] },
-      "declaredCapabilities": ["browser-control"]
+      "identity": {
+        "displayName": "ChatGPT Atlas",
+        "publisher": "OpenAI",
+        "homepage": "https://chatgpt.com/atlas"
+      },
+      "detect": {
+        "appNames": [
+          "ChatGPT Atlas"
+        ]
+      },
+      "declaredCapabilities": [
+        "browser-control"
+      ]
     },
     {
       "id": "openai.codex-cli",
       "kind": "cli",
-      "identity": { "displayName": "Codex CLI", "publisher": "OpenAI", "homepage": "https://github.com/openai/codex" },
+      "identity": {
+        "displayName": "Codex CLI",
+        "publisher": "OpenAI",
+        "homepage": "https://github.com/openai/codex"
+      },
       "detect": {
-        "cliNames": ["codex"],
-        "npmPackages": ["@openai/codex"],
-        "brewNames": ["codex"]
+        "cliNames": [
+          "codex"
+        ],
+        "npmPackages": [
+          "@openai/codex"
+        ],
+        "brewNames": [
+          "codex"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.codex/sessions", "kind": "transcripts" },
-        { "path": "~/.codex/history.jsonl", "kind": "history" },
-        { "path": "~/.codex/AGENTS.md", "kind": "instructions" },
-        { "path": "~/.codex/config.toml", "kind": "config" },
-        { "path": "~/.codex/auth.json", "kind": "credentials" },
-        { "path": "~/.codex/log", "kind": "logs" }
+        {
+          "path": "~/.codex/sessions",
+          "kind": "transcripts"
+        },
+        {
+          "path": "~/.codex/history.jsonl",
+          "kind": "history"
+        },
+        {
+          "path": "~/.codex/AGENTS.md",
+          "kind": "instructions"
+        },
+        {
+          "path": "~/.codex/config.toml",
+          "kind": "config"
+        },
+        {
+          "path": "~/.codex/auth.json",
+          "kind": "credentials"
+        },
+        {
+          "path": "~/.codex/log",
+          "kind": "logs"
+        }
       ],
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "google.gemini-cli",
       "kind": "cli",
-      "identity": { "displayName": "Gemini CLI", "publisher": "Google", "homepage": "https://github.com/google-gemini/gemini-cli" },
+      "identity": {
+        "displayName": "Gemini CLI",
+        "publisher": "Google",
+        "homepage": "https://github.com/google-gemini/gemini-cli"
+      },
       "detect": {
-        "cliNames": ["gemini"],
-        "npmPackages": ["@google/gemini-cli"],
-        "brewNames": ["gemini-cli"]
+        "cliNames": [
+          "gemini"
+        ],
+        "npmPackages": [
+          "@google/gemini-cli"
+        ],
+        "brewNames": [
+          "gemini-cli"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.gemini/tmp", "kind": "data" },
-        { "path": "~/.gemini/GEMINI.md", "kind": "instructions" },
-        { "path": "~/.gemini/settings.json", "kind": "config" },
-        { "path": "~/.gemini/oauth_creds.json", "kind": "credentials" }
+        {
+          "path": "~/.gemini/tmp",
+          "kind": "data"
+        },
+        {
+          "path": "~/.gemini/GEMINI.md",
+          "kind": "instructions"
+        },
+        {
+          "path": "~/.gemini/settings.json",
+          "kind": "config"
+        },
+        {
+          "path": "~/.gemini/oauth_creds.json",
+          "kind": "credentials"
+        }
       ],
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "google.antigravity",
       "kind": "ide",
-      "identity": { "displayName": "Antigravity", "publisher": "Google", "homepage": "https://antigravity.google" },
-      "detect": { "appNames": ["Antigravity"] },
-      "declaredCapabilities": ["code-edit", "shell", "browser-control"]
+      "identity": {
+        "displayName": "Antigravity",
+        "publisher": "Google",
+        "homepage": "https://antigravity.google"
+      },
+      "detect": {
+        "appNames": [
+          "Antigravity",
+          "Antigravity IDE"
+        ],
+        "cliNames": [
+          "antigravity",
+          "agy"
+        ]
+      },
+      "declaredCapabilities": [
+        "code-edit",
+        "shell",
+        "browser-control"
+      ]
     },
     {
       "id": "github.copilot-cli",
       "kind": "cli",
-      "identity": { "displayName": "GitHub Copilot CLI", "publisher": "GitHub", "homepage": "https://github.com/github/copilot-cli" },
+      "identity": {
+        "displayName": "GitHub Copilot CLI",
+        "publisher": "GitHub",
+        "homepage": "https://github.com/github/copilot-cli"
+      },
       "detect": {
-        "cliNames": ["copilot"],
-        "npmPackages": ["@github/copilot"]
+        "cliNames": [
+          "copilot"
+        ],
+        "npmPackages": [
+          "@github/copilot"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.copilot/session-state", "kind": "transcripts", "note": "inferred location" },
-        { "path": "~/.copilot/mcp-config.json", "kind": "config" },
-        { "path": "~/.copilot/config.json", "kind": "config" }
+        {
+          "path": "~/.copilot/session-state",
+          "kind": "transcripts",
+          "note": "inferred location"
+        },
+        {
+          "path": "~/.copilot/mcp-config.json",
+          "kind": "config"
+        },
+        {
+          "path": "~/.copilot/config.json",
+          "kind": "config"
+        }
       ],
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "anysphere.cursor",
       "kind": "ide",
-      "identity": { "displayName": "Cursor", "publisher": "Anysphere", "homepage": "https://cursor.com" },
+      "identity": {
+        "displayName": "Cursor",
+        "publisher": "Anysphere",
+        "homepage": "https://cursor.com"
+      },
       "detect": {
-        "bundleIds": ["com.todesktop.230313mzl4w4u92"],
-        "appNames": ["Cursor"],
-        "brewNames": ["cursor"]
+        "bundleIds": [
+          "com.todesktop.230313mzl4w4u92"
+        ],
+        "appNames": [
+          "Cursor"
+        ],
+        "brewNames": [
+          "cursor"
+        ],
+        "cliNames": [
+          "cursor"
+        ]
       },
       "dataPaths": [
-        { "path": "~/Library/Application Support/Cursor/User/workspaceStorage", "kind": "transcripts", "note": "per-workspace chat and agent history" },
-        { "path": "~/.cursor/mcp.json", "kind": "config" }
+        {
+          "path": "~/Library/Application Support/Cursor/User/workspaceStorage",
+          "kind": "transcripts",
+          "note": "per-workspace chat and agent history"
+        },
+        {
+          "path": "~/.cursor/mcp.json",
+          "kind": "config"
+        }
       ],
-      "declaredCapabilities": ["code-edit", "shell", "mcp-host"]
+      "declaredCapabilities": [
+        "code-edit",
+        "shell",
+        "mcp-host"
+      ]
     },
     {
       "id": "anysphere.cursor-agent",
       "kind": "cli",
-      "identity": { "displayName": "Cursor CLI", "publisher": "Anysphere", "homepage": "https://cursor.com/cli" },
-      "detect": { "cliNames": ["cursor-agent"] },
-      "declaredCapabilities": ["shell", "code-edit"]
+      "identity": {
+        "displayName": "Cursor CLI",
+        "publisher": "Anysphere",
+        "homepage": "https://cursor.com/cli"
+      },
+      "detect": {
+        "cliNames": [
+          "cursor-agent"
+        ]
+      },
+      "declaredCapabilities": [
+        "shell",
+        "code-edit"
+      ]
     },
     {
       "id": "codeium.windsurf",
       "kind": "ide",
-      "identity": { "displayName": "Windsurf", "publisher": "Windsurf", "homepage": "https://windsurf.com" },
+      "identity": {
+        "displayName": "Windsurf",
+        "publisher": "Windsurf",
+        "homepage": "https://windsurf.com"
+      },
       "detect": {
-        "bundleIds": ["com.exafunction.windsurf"],
-        "appNames": ["Windsurf"],
-        "brewNames": ["windsurf"]
+        "bundleIds": [
+          "com.exafunction.windsurf"
+        ],
+        "appNames": [
+          "Windsurf"
+        ],
+        "brewNames": [
+          "windsurf"
+        ],
+        "labelPrefixes": [
+          "com.exafunction.windsurf"
+        ],
+        "cliNames": [
+          "windsurf"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.codeium/windsurf", "kind": "data" }
+        {
+          "path": "~/.codeium/windsurf",
+          "kind": "data"
+        }
       ],
-      "declaredCapabilities": ["code-edit", "shell", "mcp-host"]
+      "declaredCapabilities": [
+        "code-edit",
+        "shell",
+        "mcp-host"
+      ]
     },
     {
       "id": "microsoft.vscode",
       "kind": "ide",
-      "identity": { "displayName": "Visual Studio Code", "publisher": "Microsoft", "homepage": "https://code.visualstudio.com" },
+      "identity": {
+        "displayName": "Visual Studio Code",
+        "publisher": "Microsoft",
+        "homepage": "https://code.visualstudio.com"
+      },
       "detect": {
-        "bundleIds": ["com.microsoft.VSCode", "com.microsoft.VSCodeInsiders"],
-        "brewNames": ["visual-studio-code"]
+        "bundleIds": [
+          "com.microsoft.VSCode",
+          "com.microsoft.VSCodeInsiders"
+        ],
+        "brewNames": [
+          "visual-studio-code"
+        ],
+        "appNames": [
+          "Visual Studio Code",
+          "Visual Studio Code - Insiders"
+        ]
       },
       "signing": {
-        "teamIds": ["UBF8T346G9"],
+        "teamIds": [
+          "UBF8T346G9"
+        ],
         "evidence": "Microsoft Corporation Developer ID team"
       },
       "dataPaths": [
-        { "path": "~/Library/Application Support/Code/User/workspaceStorage", "kind": "transcripts", "note": "includes Copilot Chat sessions" },
-        { "path": "~/Library/Application Support/Code/User/mcp.json", "kind": "config" }
+        {
+          "path": "~/Library/Application Support/Code/User/workspaceStorage",
+          "kind": "transcripts",
+          "note": "includes Copilot Chat sessions"
+        },
+        {
+          "path": "~/Library/Application Support/Code/User/mcp.json",
+          "kind": "config"
+        }
       ],
-      "declaredCapabilities": ["code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "zed.zed",
       "kind": "ide",
-      "identity": { "displayName": "Zed", "publisher": "Zed Industries", "homepage": "https://zed.dev" },
+      "identity": {
+        "displayName": "Zed",
+        "publisher": "Zed Industries",
+        "homepage": "https://zed.dev"
+      },
       "detect": {
-        "bundleIds": ["dev.zed.Zed"],
-        "appNames": ["Zed"],
-        "brewNames": ["zed"]
+        "bundleIds": [
+          "dev.zed.Zed"
+        ],
+        "appNames": [
+          "Zed"
+        ],
+        "brewNames": [
+          "zed"
+        ]
       },
       "dataPaths": [
-        { "path": "~/Library/Application Support/Zed", "kind": "data", "note": "includes agent threads" },
-        { "path": "~/.config/zed/settings.json", "kind": "config" }
+        {
+          "path": "~/Library/Application Support/Zed",
+          "kind": "data",
+          "note": "includes agent threads"
+        },
+        {
+          "path": "~/.config/zed/settings.json",
+          "kind": "config"
+        }
       ],
-      "declaredCapabilities": ["code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "warp",
       "kind": "terminal-agent",
-      "identity": { "displayName": "Warp", "publisher": "Warp", "homepage": "https://www.warp.dev" },
-      "detect": {
-        "bundleIds": ["dev.warp.Warp-Stable"],
-        "appNames": ["Warp"],
-        "brewNames": ["warp"]
+      "identity": {
+        "displayName": "Warp",
+        "publisher": "Warp",
+        "homepage": "https://www.warp.dev"
       },
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "detect": {
+        "bundleIds": [
+          "dev.warp.Warp-Stable"
+        ],
+        "appNames": [
+          "Warp"
+        ],
+        "brewNames": [
+          "warp"
+        ],
+        "labelPrefixes": [
+          "dev.warp"
+        ]
+      },
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "ollama",
       "kind": "local-model-server",
-      "identity": { "displayName": "Ollama", "publisher": "Ollama", "homepage": "https://ollama.com" },
+      "identity": {
+        "displayName": "Ollama",
+        "publisher": "Ollama",
+        "homepage": "https://ollama.com"
+      },
       "detect": {
-        "bundleIds": ["com.electron.ollama"],
-        "appNames": ["Ollama"],
-        "cliNames": ["ollama"],
-        "brewNames": ["ollama", "ollama-app"]
+        "bundleIds": [
+          "com.electron.ollama"
+        ],
+        "appNames": [
+          "Ollama"
+        ],
+        "cliNames": [
+          "ollama"
+        ],
+        "brewNames": [
+          "ollama",
+          "ollama-app"
+        ],
+        "labelPrefixes": [
+          "com.ollama",
+          "com.electron.ollama"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.ollama/models", "kind": "models" },
-        { "path": "~/.ollama/history", "kind": "history" }
+        {
+          "path": "~/.ollama/models",
+          "kind": "models"
+        },
+        {
+          "path": "~/.ollama/history",
+          "kind": "history"
+        }
       ],
-      "declaredCapabilities": ["local-inference"]
+      "declaredCapabilities": [
+        "local-inference"
+      ]
     },
     {
       "id": "lmstudio",
       "kind": "local-model-server",
-      "identity": { "displayName": "LM Studio", "publisher": "Element Labs", "homepage": "https://lmstudio.ai" },
+      "identity": {
+        "displayName": "LM Studio",
+        "publisher": "Element Labs",
+        "homepage": "https://lmstudio.ai"
+      },
       "detect": {
-        "bundleIds": ["ai.elementlabs.lmstudio"],
-        "appNames": ["LM Studio"],
-        "cliNames": ["lms"],
-        "brewNames": ["lm-studio"]
+        "bundleIds": [
+          "ai.elementlabs.lmstudio"
+        ],
+        "appNames": [
+          "LM Studio"
+        ],
+        "cliNames": [
+          "lms"
+        ],
+        "brewNames": [
+          "lm-studio"
+        ],
+        "labelPrefixes": [
+          "ai.elementlabs"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.lmstudio/models", "kind": "models" },
-        { "path": "~/.lmstudio/conversations", "kind": "transcripts" },
-        { "path": "~/.lmstudio/mcp.json", "kind": "config" }
+        {
+          "path": "~/.lmstudio/models",
+          "kind": "models"
+        },
+        {
+          "path": "~/.lmstudio/conversations",
+          "kind": "transcripts"
+        },
+        {
+          "path": "~/.lmstudio/mcp.json",
+          "kind": "config"
+        }
       ],
-      "declaredCapabilities": ["local-inference", "mcp-host"]
+      "declaredCapabilities": [
+        "local-inference",
+        "mcp-host"
+      ]
     },
     {
       "id": "llama-cpp",
       "kind": "local-model-server",
-      "identity": { "displayName": "llama.cpp", "publisher": "ggml-org", "homepage": "https://github.com/ggml-org/llama.cpp" },
-      "detect": {
-        "cliNames": ["llama-server"],
-        "brewNames": ["llama.cpp"]
+      "identity": {
+        "displayName": "llama.cpp",
+        "publisher": "ggml-org",
+        "homepage": "https://github.com/ggml-org/llama.cpp"
       },
-      "declaredCapabilities": ["local-inference"]
+      "detect": {
+        "cliNames": [
+          "llama-server"
+        ],
+        "brewNames": [
+          "llama.cpp"
+        ]
+      },
+      "declaredCapabilities": [
+        "local-inference"
+      ]
     },
     {
       "id": "jan",
       "kind": "local-model-server",
-      "identity": { "displayName": "Jan", "publisher": "Menlo Research", "homepage": "https://jan.ai" },
-      "detect": { "appNames": ["Jan"], "brewNames": ["jan"] },
+      "identity": {
+        "displayName": "Jan",
+        "publisher": "Menlo Research",
+        "homepage": "https://jan.ai"
+      },
+      "detect": {
+        "appNames": [
+          "Jan"
+        ],
+        "brewNames": [
+          "jan"
+        ]
+      },
       "dataPaths": [
-        { "path": "~/Library/Application Support/Jan", "kind": "data" }
+        {
+          "path": "~/Library/Application Support/Jan",
+          "kind": "data"
+        }
       ],
-      "declaredCapabilities": ["local-inference", "chat"]
+      "declaredCapabilities": [
+        "local-inference",
+        "chat"
+      ]
     },
     {
       "id": "block.goose",
       "kind": "cli",
-      "identity": { "displayName": "Goose", "publisher": "Block", "homepage": "https://block.github.io/goose" },
+      "identity": {
+        "displayName": "Goose",
+        "publisher": "Block",
+        "homepage": "https://block.github.io/goose"
+      },
       "$comment": "No cliNames: the name `goose` is also a popular database migration tool.",
       "detect": {
-        "appNames": ["Goose"],
-        "brewNames": ["block-goose-cli", "block-goose"]
+        "appNames": [
+          "Goose"
+        ],
+        "brewNames": [
+          "block-goose-cli",
+          "block-goose"
+        ],
+        "labelPrefixes": [
+          "block.goose"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.local/share/goose/sessions", "kind": "transcripts" },
-        { "path": "~/.config/goose", "kind": "config" }
+        {
+          "path": "~/.local/share/goose/sessions",
+          "kind": "transcripts"
+        },
+        {
+          "path": "~/.config/goose",
+          "kind": "config"
+        }
       ],
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "aider",
       "kind": "cli",
-      "identity": { "displayName": "Aider", "publisher": "Aider AI", "homepage": "https://aider.chat" },
-      "detect": {
-        "cliNames": ["aider"],
-        "pipPackages": ["aider-chat"],
-        "brewNames": ["aider"]
+      "identity": {
+        "displayName": "Aider",
+        "publisher": "Aider AI",
+        "homepage": "https://aider.chat"
       },
-      "declaredCapabilities": ["shell", "code-edit"]
+      "detect": {
+        "cliNames": [
+          "aider"
+        ],
+        "pipPackages": [
+          "aider-chat"
+        ],
+        "brewNames": [
+          "aider"
+        ]
+      },
+      "declaredCapabilities": [
+        "shell",
+        "code-edit"
+      ]
     },
     {
       "id": "opencode",
       "kind": "cli",
-      "identity": { "displayName": "OpenCode", "publisher": "SST", "homepage": "https://opencode.ai" },
+      "identity": {
+        "displayName": "OpenCode",
+        "publisher": "SST",
+        "homepage": "https://opencode.ai"
+      },
       "detect": {
-        "cliNames": ["opencode"],
-        "npmPackages": ["opencode-ai"],
-        "brewNames": ["opencode", "sst/tap/opencode"]
+        "cliNames": [
+          "opencode"
+        ],
+        "npmPackages": [
+          "opencode-ai"
+        ],
+        "brewNames": [
+          "opencode",
+          "sst/tap/opencode"
+        ],
+        "appNames": [
+          "OpenCode"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.local/share/opencode", "kind": "data" },
-        { "path": "~/.config/opencode", "kind": "config" }
+        {
+          "path": "~/.local/share/opencode",
+          "kind": "data"
+        },
+        {
+          "path": "~/.config/opencode",
+          "kind": "config"
+        }
       ],
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "sourcegraph.amp",
       "kind": "cli",
-      "identity": { "displayName": "Amp", "publisher": "Sourcegraph", "homepage": "https://ampcode.com" },
-      "detect": {
-        "cliNames": ["amp"],
-        "npmPackages": ["@sourcegraph/amp"]
+      "identity": {
+        "displayName": "Amp",
+        "publisher": "Sourcegraph",
+        "homepage": "https://ampcode.com"
       },
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "detect": {
+        "cliNames": [
+          "amp"
+        ],
+        "npmPackages": [
+          "@sourcegraph/amp"
+        ],
+        "labelPrefixes": [
+          "com.sourcegraph.amp"
+        ]
+      },
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "tencent.codebuddy",
       "kind": "cli",
-      "identity": { "displayName": "CodeBuddy Code", "publisher": "Tencent", "homepage": "https://www.codebuddy.ai" },
+      "identity": {
+        "displayName": "CodeBuddy Code",
+        "publisher": "Tencent",
+        "homepage": "https://www.codebuddy.ai"
+      },
       "detect": {
-        "cliNames": ["codebuddy"],
-        "npmPackages": ["@tencent-ai/codebuddy-code"]
+        "cliNames": [
+          "codebuddy"
+        ],
+        "npmPackages": [
+          "@tencent-ai/codebuddy-code"
+        ]
       },
       "dataPaths": [
-        { "path": "~/.codebuddy", "kind": "data", "note": "inferred location" }
+        {
+          "path": "~/.codebuddy",
+          "kind": "data",
+          "note": "inferred location"
+        }
       ],
-      "declaredCapabilities": ["shell", "code-edit", "mcp-host"]
+      "declaredCapabilities": [
+        "shell",
+        "code-edit",
+        "mcp-host"
+      ]
     },
     {
       "id": "simonw.llm",
       "kind": "cli",
-      "identity": { "displayName": "LLM (CLI)", "publisher": "Simon Willison", "homepage": "https://llm.datasette.io" },
+      "identity": {
+        "displayName": "LLM (CLI)",
+        "publisher": "Simon Willison",
+        "homepage": "https://llm.datasette.io"
+      },
       "detect": {
-        "cliNames": ["llm"],
-        "pipPackages": ["llm"],
-        "brewNames": ["llm"]
+        "cliNames": [
+          "llm"
+        ],
+        "pipPackages": [
+          "llm"
+        ],
+        "brewNames": [
+          "llm"
+        ]
       },
       "dataPaths": [
-        { "path": "~/Library/Application Support/io.datasette.llm", "kind": "transcripts", "note": "logs.db holds prompts and responses" }
+        {
+          "path": "~/Library/Application Support/io.datasette.llm",
+          "kind": "transcripts",
+          "note": "logs.db holds prompts and responses"
+        }
       ],
-      "declaredCapabilities": ["chat"]
+      "declaredCapabilities": [
+        "chat"
+      ]
     },
     {
       "id": "open-interpreter",
       "kind": "cli",
-      "identity": { "displayName": "Open Interpreter", "publisher": "Open Interpreter", "homepage": "https://github.com/openinterpreter/open-interpreter" },
-      "detect": {
-        "cliNames": ["interpreter"],
-        "pipPackages": ["open-interpreter"]
+      "identity": {
+        "displayName": "Open Interpreter",
+        "publisher": "Open Interpreter",
+        "homepage": "https://github.com/openinterpreter/open-interpreter"
       },
-      "declaredCapabilities": ["shell", "code-exec"]
+      "detect": {
+        "cliNames": [
+          "interpreter"
+        ],
+        "pipPackages": [
+          "open-interpreter"
+        ]
+      },
+      "declaredCapabilities": [
+        "shell",
+        "code-exec"
+      ]
     },
     {
       "id": "browser-use",
       "kind": "agent-framework",
-      "identity": { "displayName": "Browser Use", "publisher": "Browser Use", "homepage": "https://github.com/browser-use/browser-use" },
-      "detect": { "pipPackages": ["browser-use"] },
-      "declaredCapabilities": ["browser-control"]
+      "identity": {
+        "displayName": "Browser Use",
+        "publisher": "Browser Use",
+        "homepage": "https://github.com/browser-use/browser-use"
+      },
+      "detect": {
+        "pipPackages": [
+          "browser-use"
+        ]
+      },
+      "declaredCapabilities": [
+        "browser-control"
+      ]
     },
     {
       "id": "perplexity.comet",
       "kind": "agentic-browser",
-      "identity": { "displayName": "Comet", "publisher": "Perplexity", "homepage": "https://www.perplexity.ai/comet" },
-      "detect": { "appNames": ["Comet"] },
-      "declaredCapabilities": ["browser-control"]
+      "identity": {
+        "displayName": "Comet",
+        "publisher": "Perplexity",
+        "homepage": "https://www.perplexity.ai/comet"
+      },
+      "detect": {
+        "appNames": [
+          "Comet"
+        ]
+      },
+      "declaredCapabilities": [
+        "browser-control"
+      ]
     },
     {
       "id": "perplexity.desktop",
       "kind": "desktop-app",
-      "identity": { "displayName": "Perplexity", "publisher": "Perplexity", "homepage": "https://www.perplexity.ai" },
-      "detect": { "appNames": ["Perplexity"] },
-      "declaredCapabilities": ["chat"]
+      "identity": {
+        "displayName": "Perplexity",
+        "publisher": "Perplexity",
+        "homepage": "https://www.perplexity.ai"
+      },
+      "detect": {
+        "appNames": [
+          "Perplexity",
+          "Perplexity AI"
+        ],
+        "bundleIds": [
+          "ai.perplexity.mac"
+        ]
+      },
+      "declaredCapabilities": [
+        "chat"
+      ]
     },
     {
       "id": "nvidia.openshell",
       "kind": "agent-sandbox",
-      "identity": { "displayName": "OpenShell", "publisher": "NVIDIA", "homepage": "https://github.com/NVIDIA/OpenShell" },
+      "identity": {
+        "displayName": "OpenShell",
+        "publisher": "NVIDIA",
+        "homepage": "https://github.com/NVIDIA/OpenShell"
+      },
       "detect": {
-        "cliNames": ["openshell"],
-        "pipPackages": ["openshell"]
+        "cliNames": [
+          "openshell"
+        ],
+        "pipPackages": [
+          "openshell"
+        ]
       }
     },
     {
       "id": "nvidia.nemoclaw",
       "kind": "agent-sandbox",
-      "identity": { "displayName": "NemoClaw", "publisher": "NVIDIA", "homepage": "https://github.com/NVIDIA/NemoClaw" },
-      "detect": { "cliNames": ["nemoclaw"] },
+      "identity": {
+        "displayName": "NemoClaw",
+        "publisher": "NVIDIA",
+        "homepage": "https://github.com/NVIDIA/NemoClaw"
+      },
+      "detect": {
+        "cliNames": [
+          "nemoclaw"
+        ]
+      },
       "dataPaths": [
-        { "path": "~/.nemoclaw", "kind": "config" }
+        {
+          "path": "~/.nemoclaw",
+          "kind": "config"
+        }
       ]
     },
     {
       "id": "modelcontextprotocol.reference-servers",
       "kind": "mcp-server",
-      "identity": { "displayName": "MCP reference server", "publisher": "Model Context Protocol", "homepage": "https://github.com/modelcontextprotocol/servers" },
-      "detect": { "npmPackages": ["@modelcontextprotocol/server-*"] }
+      "identity": {
+        "displayName": "MCP reference server",
+        "publisher": "Model Context Protocol",
+        "homepage": "https://github.com/modelcontextprotocol/servers"
+      },
+      "detect": {
+        "npmPackages": [
+          "@modelcontextprotocol/server-*"
+        ]
+      }
+    },
+    {
+      "id": "openai.codex-app",
+      "kind": "desktop-app",
+      "identity": {
+        "displayName": "Codex",
+        "publisher": "OpenAI",
+        "homepage": "https://openai.com/codex"
+      },
+      "detect": {
+        "appNames": [
+          "Codex"
+        ]
+      },
+      "declaredCapabilities": [
+        "code-edit",
+        "shell"
+      ]
+    },
+    {
+      "id": "quora.poe",
+      "kind": "desktop-app",
+      "identity": {
+        "displayName": "Poe",
+        "publisher": "Quora",
+        "homepage": "https://poe.com"
+      },
+      "detect": {
+        "appNames": [
+          "Poe"
+        ]
+      },
+      "declaredCapabilities": [
+        "chat"
+      ]
+    },
+    {
+      "id": "clawpilot",
+      "kind": "agent",
+      "identity": {
+        "displayName": "ClawPilot",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "ClawPilot"
+        ],
+        "cliNames": [
+          "clawpilot"
+        ]
+      }
+    },
+    {
+      "id": "microsoft.scout",
+      "kind": "agent",
+      "identity": {
+        "displayName": "Microsoft Scout",
+        "publisher": "Microsoft",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "Microsoft Scout"
+        ]
+      }
+    },
+    {
+      "id": "cortex",
+      "kind": "cli",
+      "identity": {
+        "displayName": "Cortex",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "Cortex",
+          "Cortex Code"
+        ],
+        "cliNames": [
+          "cortex"
+        ]
+      }
+    },
+    {
+      "id": "hermes-agent",
+      "kind": "agent",
+      "identity": {
+        "displayName": "Hermes",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "Hermes",
+          "Hermes Agent"
+        ],
+        "cliNames": [
+          "hermes"
+        ]
+      }
+    },
+    {
+      "id": "jetbrains.junie",
+      "kind": "cli",
+      "identity": {
+        "displayName": "Junie",
+        "publisher": "JetBrains",
+        "homepage": "https://www.jetbrains.com/junie"
+      },
+      "detect": {
+        "appNames": [
+          "Junie"
+        ],
+        "cliNames": [
+          "junie"
+        ]
+      },
+      "declaredCapabilities": [
+        "code-edit",
+        "shell"
+      ]
+    },
+    {
+      "id": "bytedance.trae",
+      "kind": "ide",
+      "identity": {
+        "displayName": "Trae",
+        "publisher": "ByteDance",
+        "homepage": "https://www.trae.ai"
+      },
+      "detect": {
+        "appNames": [
+          "Trae"
+        ],
+        "cliNames": [
+          "trae"
+        ]
+      },
+      "declaredCapabilities": [
+        "code-edit",
+        "shell"
+      ]
+    },
+    {
+      "id": "amazon.kiro",
+      "kind": "ide",
+      "identity": {
+        "displayName": "Kiro",
+        "publisher": "Amazon",
+        "homepage": "https://kiro.dev"
+      },
+      "detect": {
+        "appNames": [
+          "Kiro"
+        ],
+        "cliNames": [
+          "kiro",
+          "kiro-cli"
+        ]
+      },
+      "declaredCapabilities": [
+        "code-edit",
+        "shell"
+      ]
+    },
+    {
+      "id": "kilo-code",
+      "kind": "cli",
+      "identity": {
+        "displayName": "Kilo Code",
+        "publisher": "community",
+        "homepage": "https://kilocode.ai"
+      },
+      "detect": {
+        "appNames": [
+          "Kilo"
+        ],
+        "cliNames": [
+          "kilo"
+        ]
+      },
+      "declaredCapabilities": [
+        "code-edit",
+        "shell"
+      ]
+    },
+    {
+      "id": "cline",
+      "kind": "cli",
+      "identity": {
+        "displayName": "Cline",
+        "publisher": "Cline",
+        "homepage": "https://cline.bot"
+      },
+      "detect": {
+        "appNames": [
+          "Cline"
+        ],
+        "cliNames": [
+          "cline"
+        ]
+      },
+      "declaredCapabilities": [
+        "code-edit",
+        "shell",
+        "mcp-host"
+      ]
+    },
+    {
+      "id": "cognition.devin",
+      "kind": "agent",
+      "identity": {
+        "displayName": "Devin",
+        "publisher": "Cognition",
+        "homepage": "https://devin.ai"
+      },
+      "detect": {
+        "appNames": [
+          "Devin"
+        ],
+        "cliNames": [
+          "devin"
+        ]
+      },
+      "declaredCapabilities": [
+        "code-edit",
+        "shell"
+      ]
+    },
+    {
+      "id": "moonshot.kimi",
+      "kind": "agent",
+      "identity": {
+        "displayName": "Kimi",
+        "publisher": "Moonshot AI",
+        "homepage": "https://kimi.ai"
+      },
+      "detect": {
+        "appNames": [
+          "Kimi"
+        ],
+        "cliNames": [
+          "kimi"
+        ]
+      }
+    },
+    {
+      "id": "omp",
+      "kind": "agent",
+      "identity": {
+        "displayName": "Omp",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "Omp"
+        ],
+        "cliNames": [
+          "omp"
+        ]
+      }
+    },
+    {
+      "id": "buzz-desktop",
+      "kind": "agent",
+      "identity": {
+        "displayName": "Buzz",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "Buzz",
+          "Buzz Desktop"
+        ],
+        "cliNames": [
+          "buzz-desktop"
+        ]
+      }
+    },
+    {
+      "id": "zcode",
+      "kind": "agent",
+      "identity": {
+        "displayName": "zcode",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "zcode"
+        ],
+        "cliNames": [
+          "zcode"
+        ]
+      }
+    },
+    {
+      "id": "qclaw",
+      "kind": "agent",
+      "identity": {
+        "displayName": "qclaw",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "qclaw"
+        ],
+        "cliNames": [
+          "qclaw"
+        ]
+      }
+    },
+    {
+      "id": "xai.grok",
+      "kind": "desktop-app",
+      "identity": {
+        "displayName": "Grok",
+        "publisher": "xAI",
+        "homepage": "https://grok.com"
+      },
+      "detect": {
+        "appNames": [
+          "Grok",
+          "Grok Bot"
+        ],
+        "cliNames": [
+          "grok"
+        ],
+        "labelPrefixes": [
+          "com.xai.grok"
+        ]
+      },
+      "declaredCapabilities": [
+        "chat"
+      ]
+    },
+    {
+      "id": "microsoft.foundry-local",
+      "kind": "local-model-server",
+      "identity": {
+        "displayName": "Azure AI Foundry Local",
+        "publisher": "Microsoft",
+        "homepage": "https://github.com/microsoft/Foundry-Local"
+      },
+      "detect": {
+        "appNames": [
+          "Foundry",
+          "Foundry Local"
+        ],
+        "cliNames": [
+          "foundry",
+          "foundrylocald"
+        ]
+      },
+      "declaredCapabilities": [
+        "local-inference"
+      ]
+    },
+    {
+      "id": "bionic",
+      "kind": "agent",
+      "identity": {
+        "displayName": "Bionic",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "detect": {
+        "appNames": [
+          "Bionic"
+        ],
+        "cliNames": [
+          "bionic"
+        ]
+      }
     },
     {
       "id": "openclaw",
       "kind": "agent",
-      "match": { "bundleId": null, "pathContains": "openclaw", "nameExact": null },
-      "detect": {
-        "cliNames": ["openclaw"],
-        "npmPackages": ["openclaw"]
+      "match": {
+        "bundleId": null,
+        "pathContains": "openclaw",
+        "nameExact": null
       },
-      "identity": { "displayName": "OpenClaw", "publisher": "OpenClaw (open source)", "homepage": "https://github.com/openclaw/openclaw" },
+      "detect": {
+        "cliNames": [
+          "openclaw"
+        ],
+        "npmPackages": [
+          "openclaw"
+        ],
+        "appNames": [
+          "OpenClaw"
+        ]
+      },
+      "identity": {
+        "displayName": "OpenClaw",
+        "publisher": "OpenClaw (open source)",
+        "homepage": "https://github.com/openclaw/openclaw"
+      },
       "dataPaths": [
-        { "path": "~/.openclaw", "kind": "data", "note": "workspace, memory and config" }
+        {
+          "path": "~/.openclaw",
+          "kind": "data",
+          "note": "workspace, memory and config"
+        }
       ],
       "declaredCapabilities": []
     },
     {
       "id": "zeroclaw",
       "kind": "agent",
-      "match": { "bundleId": null, "pathContains": "zeroclaw", "nameExact": null },
-      "identity": { "displayName": "ZeroClaw", "publisher": "community", "homepage": "https://github.com/zeroclaw/zeroclaw" },
-      "declaredCapabilities": []
+      "match": {
+        "bundleId": null,
+        "pathContains": "zeroclaw",
+        "nameExact": null
+      },
+      "identity": {
+        "displayName": "ZeroClaw",
+        "publisher": "community",
+        "homepage": "https://github.com/zeroclaw/zeroclaw"
+      },
+      "declaredCapabilities": [],
+      "detect": {
+        "cliNames": [
+          "zeroclaw"
+        ],
+        "appNames": [
+          "ZeroClaw"
+        ]
+      }
     },
     {
       "id": "qwen-code",
       "kind": "cli",
-      "match": { "bundleId": null, "pathContains": null, "nameExact": "qwen-code" },
-      "detect": {
-        "cliNames": ["qwen"],
-        "npmPackages": ["@qwen-code/qwen-code"]
+      "match": {
+        "bundleId": null,
+        "pathContains": null,
+        "nameExact": "qwen-code"
       },
-      "identity": { "displayName": "Qwen Code", "publisher": "Alibaba (Qwen)", "homepage": "https://github.com/QwenLM/qwen-code" },
+      "detect": {
+        "cliNames": [
+          "qwen",
+          "qwen-code"
+        ],
+        "npmPackages": [
+          "@qwen-code/qwen-code"
+        ],
+        "appNames": [
+          "Qwen Code",
+          "Qwen Code Desktop"
+        ]
+      },
+      "identity": {
+        "displayName": "Qwen Code",
+        "publisher": "Alibaba (Qwen)",
+        "homepage": "https://github.com/QwenLM/qwen-code"
+      },
       "dataPaths": [
-        { "path": "~/.qwen", "kind": "data" }
+        {
+          "path": "~/.qwen",
+          "kind": "data"
+        }
       ],
       "declaredCapabilities": []
     },
     {
       "id": "pi-coding-agent",
       "kind": "cli",
-      "match": { "bundleId": null, "pathContains": null, "nameExact": "pi-coding-agent" },
-      "detect": { "npmPackages": ["@mariozechner/pi-coding-agent"] },
-      "identity": { "displayName": "Pi Coding Agent", "publisher": "community", "homepage": "" },
+      "match": {
+        "bundleId": null,
+        "pathContains": null,
+        "nameExact": "pi-coding-agent"
+      },
+      "detect": {
+        "npmPackages": [
+          "@mariozechner/pi-coding-agent"
+        ],
+        "cliNames": [
+          "pi-coding-agent"
+        ]
+      },
+      "identity": {
+        "displayName": "Pi Coding Agent",
+        "publisher": "community",
+        "homepage": ""
+      },
       "declaredCapabilities": []
     },
     {
       "id": "nanobot",
       "kind": "agent",
-      "match": { "bundleId": null, "pathContains": "nanobot", "nameExact": null },
-      "identity": { "displayName": "Nanobot", "publisher": "community", "homepage": "" },
-      "declaredCapabilities": []
+      "match": {
+        "bundleId": null,
+        "pathContains": "nanobot",
+        "nameExact": null
+      },
+      "identity": {
+        "displayName": "Nanobot",
+        "publisher": "community",
+        "homepage": ""
+      },
+      "declaredCapabilities": [],
+      "detect": {
+        "cliNames": [
+          "nanobot"
+        ],
+        "appNames": [
+          "Nanobot"
+        ]
+      }
     }
   ]
 }

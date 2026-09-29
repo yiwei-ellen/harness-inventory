@@ -162,12 +162,14 @@ async function main(): Promise<void> {
     return;
   }
 
-  const { components, sources, leftovers, catalog } = runScan(catalogPath);
+  const { components, sources, leftovers, catalog, outOfScope } = runScan(catalogPath, {
+    all: opts.all,
+  });
 
   if (opts.json) {
     console.log(renderJson(components));
   } else {
-    console.log(renderTable(components, { agentsOnly: !opts.all }));
+    console.log(renderTable(components, { agentsOnly: !opts.all, hiddenElsewhere: outOfScope }));
     const details = renderDetails(components, { leftovers, catalog });
     if (details) {
       console.log("");

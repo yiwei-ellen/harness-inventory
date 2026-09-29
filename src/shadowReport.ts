@@ -94,15 +94,23 @@ export async function runShadowReport(
   components: Component[],
   opts: { noBrowser: boolean; openFn: (url: string) => void }
 ): Promise<void> {
-  const unidentified = components.filter((c) => !c.identified);
-  if (unidentified.length === 0) return; // zero unidentified -> no prompt at all
+  // Shadow reporting covers MCP servers only: an MCP server you configured is an
+  // agent by definition, so one the catalog doesn't recognize is a genuine
+  // "shadow agent" worth reporting. Non-MCP components are shown only when they
+  // match the allowlist, so they are never unidentified and never reported.
+  const unidentified = components.filter(
+    (c) => !c.identified && c.installMethod === "mcp_config"
+  );
+  if (unidentified.length === 0) return; // nothing to report -> no prompt at all
 
   // Non-interactive stdin (piped/CI): default to No, take no network action.
   if (!process.stdin.isTTY) {
     console.log(
-      `\n${unidentified.length} component${
+      `\n${unidentified.length} MCP server${
         unidentified.length === 1 ? "" : "s"
-      } could not be identified. Re-run in an interactive terminal to report them.`
+      } could not be identified. Re-run in an interactive terminal to report ${
+        unidentified.length === 1 ? "it" : "them"
+      }.`
     );
     return;
   }
@@ -116,9 +124,11 @@ export async function runShadowReport(
     const ans = (
       await ask(
         rl,
-        `\n${unidentified.length} component${
+        `\n${unidentified.length} MCP server${
           unidentified.length === 1 ? "" : "s"
-        } could not be identified. Report them to help the community catalog? [y/N] `
+        } could not be identified. Report ${
+          unidentified.length === 1 ? "it" : "them"
+        } to help the community catalog? [y/N] `
       )
     )
       .trim()

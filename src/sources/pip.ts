@@ -40,6 +40,7 @@ export function collectPip(): SourceResult {
         // name marker. No absolute path means the signing pass is a no-op
         // (unknown), which is correct for a Python distribution.
         path: `pip:${name}`,
+        binaryName: name,
         version: pkg?.version,
         publisher: "pip (user)",
         firstSeen: "",

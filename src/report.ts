@@ -103,6 +103,9 @@ export interface TableOptions {
   // Only list agent-related components (see agentRelated). Default false, so
   // renderTable(components) lists everything as it always has.
   agentsOnly?: boolean;
+  // Components the scan already left out as ordinary software, counted in the
+  // "not shown" summary.
+  hiddenElsewhere?: number;
 }
 
 // Render the table. Linked components print indented beneath what they belong
@@ -120,13 +123,16 @@ export function renderTable(components: Component[], opts: TableOptions = {}): s
   const nameCells = rows.map(
     (r) => treePrefix(r.depth) + sanitizeForTerminal(r.c.name)
   );
+  const binaryCells = rows.map((r) => sanitizeForTerminal(binaryLabel(r.c)));
   const nameWidth = Math.max(4, ...nameCells.map((s) => s.length)) + 2;
+  const binaryWidth = Math.max("BINARY".length, ...binaryCells.map((s) => s.length)) + 2;
   const methodWidth = 16;
   const signWidth = 12;
   const statusWidth = 14;
 
   const header =
     pad("NAME", nameWidth) +
+    pad("BINARY", binaryWidth) +
     pad("INSTALLED VIA", methodWidth) +
     pad("SIGNED", signWidth) +
     pad("STATUS", statusWidth) +
@@ -136,6 +142,7 @@ export function renderTable(components: Component[], opts: TableOptions = {}): s
   rows.forEach((r, i) => {
     lines.push(
       pad(nameCells[i], nameWidth) +
+        pad(binaryCells[i], binaryWidth) +
         pad(methodLabel(r.c.installMethod), methodWidth) +
         pad(signingLabel(r.c.signingStatus), signWidth) +
         pad(idLabel(r.c), statusWidth) +
@@ -148,7 +155,7 @@ export function renderTable(components: Component[], opts: TableOptions = {}): s
   const unidentified = total - identified;
   lines.push("");
   if (opts.agentsOnly) {
-    const hidden = components.length - total;
+    const hidden = components.length - total + (opts.hiddenElsewhere ?? 0);
     lines.push(
       `${total} agent-related component${total === 1 ? "" : "s"} · ${identified} identified · ${unidentified} unidentified` +
         (hidden > 0
@@ -162,6 +169,18 @@ export function renderTable(components: Component[], opts: TableOptions = {}): s
   }
 
   return lines.join("\n");
+}
+
+// The executable behind a component: the declared binary name when a source
+// knows it (CFBundleExecutable, an MCP command, a package's bin), else the
+// basename of the executable path for CLIs and browser bridges.
+function binaryLabel(c: Component): string {
+  if (c.binaryName) return c.binaryName;
+  if (c.installMethod === "cli_on_path" || c.installMethod === "native_messaging_host") {
+    const p = c.executablePath || c.path;
+    return p.split("/").pop() || "—";
+  }
+  return "—";
 }
 
 function treePrefix(depth: number): string {

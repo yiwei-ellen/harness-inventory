@@ -280,6 +280,9 @@ function parseClient(cfg: ClientConfig): Component[] {
           name: serverName,
           installMethod: "mcp_config",
           path: resolvedPath,
+          // The command the server launches under (e.g. "npx", "node", or an
+          // absolute binary's name).
+          binaryName: command ? path.basename(command) : undefined,
           firstSeen,
           sourceRefs: [`mcp_config:${abs}${refSuffix}`],
           // A server the client explicitly declares by name is identified: the
@@ -333,6 +336,10 @@ function collectClaudeExtensions(): { found: boolean; components: Component[] } 
         name,
         installMethod: "mcp_config",
         path: dir,
+        binaryName:
+          typeof mcpConfig.command === "string" && mcpConfig.command
+            ? path.basename(mcpConfig.command)
+            : undefined,
         version: typeof manifest.version === "string" ? manifest.version : undefined,
         firstSeen: fileFirstSeen(dir),
         sourceRefs: [`mcp_config:${manifestPath}`],

@@ -122,6 +122,10 @@ export interface Component {
   name: string;
   installMethod: InstallMethod;
   path: string;
+  // Basename of the resolved executable/command (e.g. "Claude", "ollama",
+  // "npx"). Distinct from `path`, which for an app bundle is the .app directory.
+  // Shown as its own column so the actual binary behind a component is visible.
+  binaryName?: string;
   // Platform this record was collected on. Always "macos" in this v1 collector;
   // present so the schema tolerates other platforms without changes.
   platform: string;

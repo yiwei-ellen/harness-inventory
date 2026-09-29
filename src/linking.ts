@@ -106,6 +106,8 @@ export function absorbClis(components: Component[]): Component[] {
     target.sourceRefs = Array.from(new Set([...target.sourceRefs, ...cli.sourceRefs]));
     if (target.installMethod !== "app_bundle" && !target.executablePath) {
       target.executablePath = cli.path;
+      // The command you type ("codex") says more than the package name.
+      if (cli.binaryName) target.binaryName = cli.binaryName;
     }
     absorbed.add(cli);
   }

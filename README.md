@@ -2,7 +2,7 @@
 
 **Your Mac has guests. This tells you who they are, how they got in, and whether anyone can vouch for them.**
 
-AI agents move in quietly — an `npm install` here, an MCP config there — and before long you've got a houseful of software with access to your files, and nobody's checked a single ID. `agent-inventory` is a free, open-source CLI that walks the halls of your Mac, takes attendance, and gives it to you straight: who's here, what they can prove about themselves, and who's the stranger in the corner nobody recognizes.
+AI agents move in quietly — an `npm install` here, an MCP config there — and before long you've got a houseful of software with access to your files, and nobody's checked a single ID. `agent-inventory` is a free, open-source CLI that walks the halls of your Mac, takes attendance of the **AI agents** — and only the AI agents — and gives it to you straight: who's here, how they got in, and who can vouch for them.
 
 ## Why this exists
 
@@ -10,13 +10,14 @@ No agent vendor is ever going to hand you a guest list that includes their compe
 
 ## 🔍 What it does
 
-- **Takes attendance** — MCP servers, agent CLIs, and agent-adjacent apps, wherever they're hiding: Homebrew, npm, pip, `.app` bundles, launch agents, MCP client configs, CLIs sitting on your `PATH`, and the browser — extensions and the "native messaging" bridges they use to reach programs on your Mac.
+- **Lists AI agents only** — Chrome, Safari, Steam and the rest of your ordinary software never show up. A component is reported only if it's a known agent in the [catalog](./catalog/known-agents.json), a configured MCP server, or a browser bridge/extension linked to one. It looks for them wherever they're hiding: Homebrew, npm, pip, `.app` bundles, launch agents, MCP client configs, CLIs sitting on your `PATH`, and the browser — extensions and the "native messaging" bridges they use to reach programs on your Mac.
 - **Keeps the family tree straight** — an MCP server shows up linked to the app or CLI that configured it, and a browser extension shows up under the bridge (and the app) it talks to — not swallowed inside them.
+- **Shows the actual binary** — alongside each name, the executable behind it (`claude`, `Claude`, an MCP server's `npx`/`node`/`docker`).
 - **Checks whatever ID is actually available** — see [Trust, explained honestly](#-trust-explained-honestly) below; not everything carries the same kind of paperwork. For known agents it also checks that the signature on disk comes from the team the catalog says ships it — an app *called* "Claude" and an app *signed by Anthropic* aren't the same claim.
 - **Notes what each guest was handed** — which MCP servers an agent can call (and the names of the keys it passes them — never the values), and which macOS privacy permissions it holds, including the ones a command-line agent quietly inherits from your terminal.
 - **Notices what they leave in the room** — transcripts, instruction files, saved logins, downloaded models: where they are, how big, when they last changed. It measures; it never opens them. Agents you've uninstalled still show up here if their files didn't leave with them.
 - **Sees who's busy right now** — for agents that are running, the processes running underneath them (`git push`, a shell, an MCP server).
-- **Doesn't bluff** — an unidentified component stays labeled unidentified. No guessing, no made-up names.
+- **Doesn't bluff** — matching is exact (a name, a command on `PATH`, a package, a bundle ID, a vendor's reverse-DNS prefix); there's no fuzzy guessing. If it isn't a known agent or a declared MCP server, it's left out rather than mislabeled.
 - **Shows up, does the walkthrough, leaves** — no background process, no scheduled visits, no telemetry. Nothing gets sent anywhere unless you say so.
 
 ## Requirements
@@ -108,28 +109,34 @@ daemon, no scheduled runs, no telemetry. Each run:
 4. Adds what's true right now: which agents are running and what's running
    under them, their macOS privacy permissions (when readable), and what they
    keep on disk.
-5. Reports it as plain facts, with no scores or alarm coloring. By default the
-   table shows agent-related components only — known agents, MCP servers, and
-   anything unidentified. `--all` lists every app and package the sources saw.
+5. Reports it as plain facts, with no scores or alarm coloring.
+
+Step 2 is also a filter: anything that isn't a known agent, an MCP server, or
+linked to one is dropped *before* the expensive checks (reading `Info.plist`,
+`codesign`/`spctl`), so those run on the handful of agents instead of every app
+on disk — that's what keeps a scan fast. `--all` skips the filter and lists
+every app and package the sources saw (slower, for the same reason).
 
 Piping the output (or using `--json`) is non-interactive: the report prompt
 below is skipped and no network action is taken.
 
 ## Example output
 
-```
-NAME                       INSTALLED VIA   SIGNED      STATUS        FIRST SEEN
-Claude                     app bundle      notarized   identified    2026-02-14
-  └ github                 mcp config      —           identified    2026-03-02
-  └ Claude browser bridge  browser bridge  notarized   identified    2026-06-20
-    └ Claude               browser ext     —           identified    2026-06-20
-Cursor                     app bundle      notarized   identified    2026-01-02
-  └ filesystem             mcp config      —           identified    2026-01-02
-Claude Code                on PATH         notarized   identified    2026-03-11
-  └ sentry                 mcp config      —           identified    2026-04-09
-unknown-binary             launch item     unsigned    unidentified  2026-09-01
+Only agents appear — the dozens of ordinary apps on the same machine are filtered out. The `BINARY` column shows the executable behind each row.
 
-9 agent-related components · 8 identified · 1 unidentified · 212 other apps or packages not shown (--all lists everything)
+```
+NAME                       BINARY              INSTALLED VIA   SIGNED      STATUS        FIRST SEEN
+Claude                     Claude              app bundle      notarized   identified    2026-02-14
+  └ github                 npx                 mcp config      —           identified    2026-03-02
+  └ Claude browser bridge  chrome-native-host  browser bridge  notarized   identified    2026-06-20
+    └ Claude               —                   browser ext     —           identified    2026-06-20
+Cursor                     Cursor              app bundle      notarized   identified    2026-01-02
+  └ filesystem             npx                 mcp config      —           identified    2026-01-02
+Claude Code                claude              on PATH         notarized   identified    2026-03-11
+  └ sentry                 —                   mcp config      —           identified    2026-04-09
+Ollama                     ollama              brew            signed      identified    2026-02-09
+
+9 agent-related components · 9 identified · 0 unidentified · 212 other apps or packages not shown (--all lists everything)
 
 DETAILS
 
@@ -166,7 +173,9 @@ Beyond that, identification comes from an open, community-maintained catalog —
 
 ## 🤷 Run into a stranger?
 
-If a scan turns up something unidentified, you'll be asked once — and only once — whether you'd like to report it. You don't need to know what it is; that's the whole point of it being unidentified. The tool hands you a pre-filled GitHub issue with the boring technical details already in it (a fingerprint hash, install path, signing status), you look it over, and you hit submit yourself. Nothing goes out the door without you.
+Because the report is limited to known agents, the stranger worth surfacing is an **MCP server you configured that nobody can vouch for** — an MCP server is an agent by definition. (Ordinary apps are never "unidentified"; they're simply not agents, so they're left out.) Today every server a client config declares by name counts as identified, so in practice this prompt rarely appears; a catalog of known MCP servers is what would make it useful.
+
+If a scan does turn up an unidentified MCP server, you'll be asked once — and only once — whether you'd like to report it. You don't need to know what it is; that's the whole point of it being unidentified. The tool hands you a pre-filled GitHub issue with the boring technical details already in it (a fingerprint hash, install path, signing status), you look it over, and you hit submit yourself. Nothing goes out the door without you.
 
 ## What this is not
 
@@ -196,7 +205,7 @@ If a scan turns up something unidentified, you'll be asked once — and only onc
 }
 ```
 
-- **`detect`** lists exact identifiers, each tied to the kind of install it applies to: `bundleIds`, `appNames` (exact `.app` names), `cliNames` (looked up on `PATH`), `npmPackages` (a trailing `*` is a prefix match), `brewNames`, `pipPackages`, `nativeHostNames`, `extensionIds`. Any one matching is a match. No fuzzy names, no guessing.
+- **`detect`** lists exact identifiers, each tied to the kind of install it applies to: `bundleIds`, `appNames` (exact `.app` names), `cliNames` (looked up on `PATH`), `npmPackages` (a trailing `*` is a prefix match), `brewNames`, `pipPackages`, `nativeHostNames`, `extensionIds`, and `labelPrefixes` (a vendor's reverse-DNS prefix for launch agents and login items, matched at a dot boundary). Any one matching is a match. No fuzzy names, no guessing. Matching an entry is also what puts a component in the report at all.
 - **`signing.teamIds`** — leave empty until you've seen it. `agent-inventory catalog suggest` prints the teams it saw on your Mac for known agents; cite where it came from in `evidence`.
 - **`dataPaths`** — where the agent keeps things. Kinds: `transcripts`, `history`, `instructions`, `credentials`, `models`, `config`, `logs`, `data`.
 - The original `match` blocks (every non-null field must match) still work exactly as before.

@@ -15,6 +15,7 @@ import {
   childrenOf,
 } from "./sources/processes";
 import { dedupe } from "./dedup";
+import { enrichComponent } from "./enrich";
 import { linkHostApps, absorbClis, linkBrowserBridges } from "./linking";
 import { inspectSigning } from "./signing";
 import {
@@ -22,6 +23,7 @@ import {
   checkPublishers,
   catalogCliNames,
   loadCatalog,
+  isInScope,
   CatalogEntry,
 } from "./catalog";
 import { readTcc, applyPermissions, permissionsSource } from "./permissions";
@@ -34,15 +36,28 @@ export interface ScanResult {
   catalog: CatalogEntry[];
   // Known agents not installed here whose data is still on disk.
   leftovers: Leftover[];
+  // Components found but left out as ordinary software (0 with --all).
+  outOfScope: number;
+}
+
+export interface ScanOptions {
+  // Keep every app and package, not just agent-related ones. Slower: every
+  // app bundle then gets its Info.plist read and its signature checked.
+  all?: boolean;
 }
 
 // Run the full pipeline:
-//   sources -> dedup -> fold CLIs into their packages -> signing -> catalog
-//   (tag agents, label strangers, check publishers) -> link (MCP servers to
-//   their clients, browser bridges) -> running state + child processes ->
-//   privacy permissions -> data footprints.
+//   sources -> dedup -> fold CLIs into their packages -> agent-scope filter ->
+//   enrich survivors (Info.plist, launch targets) -> signing -> catalog (tag
+//   agents, label strangers, check publishers) -> link (MCP servers to their
+//   clients, browser bridges) -> running state + child processes -> privacy
+//   permissions -> data footprints.
+//
+// The scope filter runs before enrichment and signing on purpose: those spawn
+// a subprocess per component, so paying for them only on the handful of
+// agents (instead of every app on disk) is what keeps a scan fast.
 // Each stage is defensive; no source can halt the scan.
-export function runScan(catalogPath: string): ScanResult {
+export function runScan(catalogPath: string, opts: ScanOptions = {}): ScanResult {
   const entries = loadCatalog(catalogPath);
 
   // Stage 1 + 2: enumerate sources and parse. Each collector returns silently
@@ -64,7 +79,11 @@ export function runScan(catalogPath: string): ScanResult {
 
   // Stage 3: unify + dedup. A CLI that resolves into a package or app the
   // inventory already has is folded into it.
-  const components = absorbClis(dedupe(raw));
+  const deduped = absorbClis(dedupe(raw));
+
+  // Stage 3: agent scope, then enrichment for what survives.
+  const components = opts.all ? deduped : scopeToAgents(deduped, entries);
+  for (const c of components) enrichComponent(c);
 
   // Stage 3: signing status for every resolved binary path (not only
   // unidentified ones). A discovered publisher can establish identity.
@@ -114,7 +133,39 @@ export function runScan(catalogPath: string): ScanResult {
   applyFootprints(components, entries);
   const leftovers = findLeftovers(components, entries);
 
-  return { components, sources, catalog: entries, leftovers };
+  return {
+    components,
+    sources,
+    catalog: entries,
+    leftovers,
+    outOfScope: deduped.length - components.length,
+  };
+}
+
+// Keep declared MCP servers, catalog CLIs, and catalog matches; then the browser
+// bridges whose program lives inside a kept app (or that the catalog knows),
+// and the extensions those bridges allow. Everything else is ordinary software.
+export function scopeToAgents(components: Component[], entries: CatalogEntry[]): Component[] {
+  const kept = new Set<Component>(components.filter((c) => isInScope(c, entries)));
+
+  const keptApps = Array.from(kept).filter((c) => c.installMethod === "app_bundle");
+  for (const c of components) {
+    if (c.installMethod !== "native_messaging_host" || kept.has(c)) continue;
+    if (keptApps.some((a) => c.path.startsWith(a.path + "/"))) kept.add(c);
+  }
+
+  const allowed = new Set<string>();
+  for (const c of kept) {
+    if (c.installMethod !== "native_messaging_host") continue;
+    for (const id of c.browser?.extensionIds ?? []) allowed.add(id.toLowerCase());
+  }
+  for (const c of components) {
+    if (c.installMethod !== "browser_extension" || kept.has(c)) continue;
+    if ((c.browser?.extensionIds ?? []).some((id) => allowed.has(id.toLowerCase()))) {
+      kept.add(c);
+    }
+  }
+  return components.filter((c) => kept.has(c));
 }
 
 function shouldInspectSigning(c: Component, target: string): boolean {

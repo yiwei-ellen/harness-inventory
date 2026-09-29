@@ -42,6 +42,10 @@ export interface CatalogDetect {
   nativeHostNames?: string[];
   // Chromium extension IDs.
   extensionIds?: string[];
+  // Reverse-DNS prefixes for launch agents/daemons and login items, matched
+  // against the item's label at a dot boundary ("com.anthropic." matches
+  // "com.anthropic.claudefordesktop.ShipIt", never "com.anthropicx.y").
+  labelPrefixes?: string[];
 }
 
 interface CatalogIdentity {
@@ -165,6 +169,16 @@ export function applyCatalog(
     comp.sourceRefs = [...comp.sourceRefs, `catalog:${entry.identity.displayName}`];
     comp.identified = true;
   }
+}
+
+// Agent scope. A component belongs in the default report when it is a
+// declared MCP server, a catalog-listed CLI found on PATH, or matches a catalog
+// entry. Runs BEFORE enrichment, so it only relies on what cheap collection
+// provides (names, paths, package names, labels); bundle IDs are checked again
+// after Info.plist is read.
+export function isInScope(c: Component, entries: CatalogEntry[]): boolean {
+  if (c.installMethod === "mcp_config" || c.installMethod === "cli_on_path") return true;
+  return !!firstMatch(c, entries);
 }
 
 // Compare each catalog agent's on-disk signing team to the catalog's record.
@@ -330,6 +344,16 @@ export function detectMatches(c: Component, d: CatalogDetect): boolean {
   if (d.extensionIds && c.installMethod === "browser_extension") {
     const ids = (c.browser?.extensionIds ?? []).map(lc);
     if (d.extensionIds.some((x) => ids.includes(lc(x)))) return true;
+  }
+
+  if (d.labelPrefixes && c.installMethod === "launch_item") {
+    const label = lc(c.name);
+    for (const raw of d.labelPrefixes) {
+      const p = lc(raw);
+      if (!p) continue;
+      const prefix = p.endsWith(".") ? p : p + ".";
+      if (label === p.replace(/\.$/, "") || label.startsWith(prefix)) return true;
+    }
   }
 
   return false;

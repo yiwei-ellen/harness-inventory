@@ -1,16 +1,10 @@
 import * as path from "path";
 import { Component, SourceResult } from "../types";
-import {
-  homeDir,
-  listDir,
-  isDirectory,
-  readPlist,
-  fileFirstSeen,
-} from "../util";
+import { homeDir, listDir, isDirectory, fileFirstSeen } from "../util";
 import { makeComponent } from "./base";
 
 // LaunchAgents / LaunchDaemons directories. These hold plists that declare a
-// program to run; we transcribe the declared Label and program path.
+// program to run at load/login.
 function launchDirs(): string[] {
   return [
     path.join(homeDir(), "Library/LaunchAgents"),
@@ -19,40 +13,12 @@ function launchDirs(): string[] {
   ];
 }
 
-interface LaunchPlist {
-  Label?: string;
-  Program?: string;
-  ProgramArguments?: string[];
-}
-
-function parsePlistFile(plistPath: string): Component | null {
-  const plist = readPlist<LaunchPlist>(plistPath);
-  if (!plist) return null;
-
-  // Program path: explicit Program, else first ProgramArguments element.
-  const program =
-    plist.Program ||
-    (Array.isArray(plist.ProgramArguments) && plist.ProgramArguments.length > 0
-      ? plist.ProgramArguments[0]
-      : undefined);
-
-  const label = plist.Label || path.basename(plistPath).replace(/\.plist$/i, "");
-  // path points at the launched program when known (so signing can run), else
-  // at the plist itself so provenance is never empty.
-  const resolvedPath = program && path.isAbsolute(program) ? program : plistPath;
-
-  return makeComponent({
-    name: label,
-    installMethod: "launch_item",
-    path: resolvedPath,
-    firstSeen: fileFirstSeen(plistPath),
-    sourceRefs: [`launch_item:${plistPath}`],
-    // Launch items carry no inherent identity. Identity must come from a code
-    // signing publisher, a resolved app bundle (via dedup), or the catalog.
-    identified: false,
-  });
-}
-
+// Cheap collection: the plist filename (minus .plist) is the item's label — and
+// for launchd items the label almost always equals the reverse-DNS name inside
+// the plist, so it is enough to decide agent scope. Parsing the plist to find
+// the target program (a `plutil` subprocess) is deferred to enrichment, which
+// runs only on items that survive the scope filter. This avoids a subprocess per
+// launch item on machines that have many.
 export function collectLaunchItems(): SourceResult {
   let anyFound = false;
   const components: Component[] = [];
@@ -61,8 +27,19 @@ export function collectLaunchItems(): SourceResult {
     anyFound = true;
     for (const entry of listDir(dir)) {
       if (!entry.toLowerCase().endsWith(".plist")) continue;
-      const comp = parsePlistFile(path.join(dir, entry));
-      if (comp) components.push(comp);
+      const plistPath = path.join(dir, entry);
+      const label = entry.replace(/\.plist$/i, "");
+      components.push(
+        makeComponent({
+          name: label,
+          installMethod: "launch_item",
+          // Points at the plist until enrichment resolves the target program.
+          path: plistPath,
+          firstSeen: fileFirstSeen(plistPath),
+          sourceRefs: [`launch_item:${plistPath}`],
+          identified: false,
+        })
+      );
     }
   }
   return { source: "launch_item", found: anyFound, components };

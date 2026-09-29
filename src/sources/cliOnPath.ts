@@ -79,6 +79,7 @@ export function collectCliOnPath(cliNames: string[]): SourceResult {
           name,
           installMethod: "cli_on_path",
           path: resolved,
+          binaryName: name,
           firstSeen: fileFirstSeen(resolved),
           sourceRefs: [`cli:${name}`, `cli_on_path:${candidate}`],
           // Identity comes from the catalog (it listed this exact name) or a
