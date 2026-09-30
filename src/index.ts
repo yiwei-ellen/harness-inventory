@@ -7,9 +7,15 @@ import { defaultCatalogPath, suggestTeamIds } from "./catalog";
 import { updateCatalog } from "./network";
 import { SourceResult } from "./types";
 import { sanitizeForTerminal } from "./util";
+import { buildReportModel, renderHtmlReport } from "./htmlReport";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 
 interface Options {
   json: boolean;
+  // Write the HTML report: true for the default location, or a file path.
+  html: boolean | string;
   noBrowser: boolean;
   updateCatalog: boolean;
   all: boolean;
@@ -19,6 +25,7 @@ interface Options {
 function parseArgs(argv: string[]): { command: string; sub: string; opts: Options } {
   const opts: Options = {
     json: false,
+    html: false,
     noBrowser: false,
     updateCatalog: false,
     all: false,
@@ -26,7 +33,22 @@ function parseArgs(argv: string[]): { command: string; sub: string; opts: Option
   };
   let command = "scan";
   let sub = "";
-  for (const arg of argv) {
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg.startsWith("--html=")) {
+      opts.html = arg.slice("--html=".length) || true;
+      continue;
+    }
+    if (arg === "--html") {
+      const next = argv[i + 1];
+      if (next && !next.startsWith("-") && next.toLowerCase().endsWith(".html")) {
+        opts.html = next;
+        i++;
+      } else {
+        opts.html = true;
+      }
+      continue;
+    }
     switch (arg) {
       case "scan":
         command = "scan";
@@ -72,6 +94,8 @@ function printHelp(): void {
       "",
       "Options:",
       "  --all              List every app and package found, not just agent-related ones",
+      "  --html [file]      Write the report as a web page and open it in your browser",
+      "                     (default file: agent-inventory-report.html in your temp folder)",
       "  --json             Print the full Component[] array as JSON",
       "  --no-browser       In the report flow, print issue-draft URLs instead of opening a browser",
       "  --update-catalog   Fetch the latest known-agents.json from the project repo before scanning",
@@ -166,7 +190,21 @@ async function main(): Promise<void> {
     all: opts.all,
   });
 
-  if (opts.json) {
+  if (opts.html) {
+    const file =
+      typeof opts.html === "string"
+        ? path.resolve(opts.html)
+        : path.join(os.tmpdir(), "agent-inventory-report.html");
+    const model = buildReportModel({ components, sources, leftovers, catalog, outOfScope });
+    // Owner-only: the report lists MCP servers and key names on this Mac.
+    fs.writeFileSync(file, renderHtmlReport(model), { encoding: "utf8", mode: 0o600 });
+    console.log(`Report written to ${file}`);
+    if (opts.noBrowser) {
+      console.log("Open it in your browser to view it.");
+    } else {
+      openInBrowser(file);
+    }
+  } else if (opts.json) {
     console.log(renderJson(components));
   } else {
     console.log(renderTable(components, { agentsOnly: !opts.all, hiddenElsewhere: outOfScope }));
@@ -181,7 +219,7 @@ async function main(): Promise<void> {
 
   // Stage 6: shadow-agent reporting (interactive, opt-in, never auto-submits).
   // Skipped entirely in JSON mode to keep that output machine-clean.
-  if (!opts.json) {
+  if (!opts.json && !opts.html) {
     await runShadowReport(components, {
       noBrowser: opts.noBrowser,
       openFn: openInBrowser,

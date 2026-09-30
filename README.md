@@ -40,6 +40,19 @@ node dist/index.js scan
 ```
 
 That's it: it prints the report and exits, usually within a few seconds.
+
+Prefer a page to a terminal table? Add `--html`:
+
+```bash
+node dist/index.js scan --html
+```
+
+It writes the same report as a single web page (`agent-inventory-report.html` in
+your temp folder, readable only by you) and opens it in your browser. The page
+starts with what's worth a look, then has a searchable card per agent with its
+MCP servers, the keys they receive, its permissions and what it keeps on disk.
+It's fully self-contained: it loads nothing from the internet. Pass a path to
+save it somewhere else: `--html ~/Desktop/agents.html`.
 Want a short command? Run `npm link` once in the repo, and `agent-inventory scan`
 works from anywhere.
 
@@ -146,6 +159,9 @@ After `npm link` (or replace `agent-inventory` with `node dist/index.js`):
 # Walk the house and print the guest list
 agent-inventory scan
 
+# Same report as a web page, opened in your browser
+agent-inventory scan --html
+
 # Machine-readable output — the full Component[] array
 agent-inventory scan --json > inventory.json
 
@@ -172,6 +188,7 @@ agent-inventory scan --help
 | Flag | What it does |
 | --- | --- |
 | `--all` | List every app and package found, not just agent-related ones. |
+| `--html [file]` | Write the report as a self-contained web page and open it in your browser. Default file: `agent-inventory-report.html` in your temp folder (owner-only). With `--no-browser`, just prints where it was written. |
 | `--json` | Print the full `Component[]` array as JSON instead of the table (every component; `agentRelated` marks the ones the default table shows). Paths are generalized to `~`, so no username leaks into the output. |
 | `--no-browser` | In the report flow, print the prefilled issue URLs for you to open yourself instead of launching a browser. |
 | `--update-catalog` | Fetch the latest `known-agents.json` from this repo before scanning. This is the *only* network call the tool can make; it is off by default and logged to you before it happens. |

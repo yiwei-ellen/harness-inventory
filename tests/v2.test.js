@@ -381,3 +381,51 @@ test("end to end against a simulated Mac home", () => {
   assert.ok(/~\/\.codex\/auth\.json\s+credentials/.test(text));
   assert.ok(run(["scan", "--all"]).includes("Dark Reader"));
 });
+
+// --- HTML report -------------------------------------------------------------
+
+test("HTML report: self-contained, script-safe, no home path, no secrets", () => {
+  const { buildReportModel, renderHtmlReport } = require("../dist/htmlReport");
+  const home = os.homedir();
+  const agent = comp({
+    name: "Evil</script><script>alert(1)</script>",
+    installMethod: "cli_on_path",
+    path: path.join(home, ".local/bin/evil"),
+    identified: true,
+    agent: { catalogId: "x", kind: "cli", displayName: "x" },
+    relatedComponents: ["mcp_config:gh:/c"],
+  });
+  const server = comp({ name: "gh", installMethod: "mcp_config", path: "/c", sourceRefs: ["mcp_config:/c"], hostApp: "mcp_config:gh:/c", identified: true, mcp: { transport: "stdio", command: "npx", launches: "@x/gh", envKeys: ["GITHUB_TOKEN"] } });
+  // make the server resolvable as the agent's child
+  server.hostApp = "x";
+  const model = buildReportModel({ components: [agent, server], sources: [], leftovers: [], catalog: [], outOfScope: 3 });
+  assert.equal(model.agents.length, 1);
+  assert.equal(model.summary.notShown, 3);
+  const html = renderHtmlReport(model);
+  assert.ok(html.startsWith("<!doctype html>"));
+  assert.ok(!html.includes("</script><script>alert"), "a crafted name cannot close the data block");
+  assert.ok(!html.includes(home), "no literal home path");
+  assert.ok(!/<script[^>]+src=|<link[^>]+href=|https?:\/\//.test(html.replace(/https?:\/\/[^"']*w3\.org[^"']*/g, "")), "nothing is loaded from the network");
+  assert.ok(html.includes("default-src 'none'"), "CSP blocks network loads");
+  const fragment = renderHtmlReport(model, { fragment: true });
+  assert.ok(!fragment.includes("<html"));
+});
+
+test("--html writes a report file and prints its path", () => {
+  const { home } = makeFakeHome();
+  const out = path.join(home, "report.html");
+  const cli = path.join(__dirname, "..", "dist", "index.js");
+  const stdout = execFileSync(process.execPath, [cli, "scan", "--html", out, "--no-browser"], {
+    env: { HOME: home, PATH: "/usr/bin:/bin" }, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+  });
+  assert.ok(stdout.includes(out));
+  const html = fs.readFileSync(out, "utf8");
+  assert.ok(html.includes("Agents on this Mac"));
+  assert.ok(!html.includes("SECRET"), "no secret values in the report");
+  assert.ok(!html.includes(home), "no home path in the report");
+  const data = JSON.parse(html.match(/<script type="application\/json" id="scan-data">([\s\S]*?)<\/script>/)[1]);
+  assert.ok(data.agents.some((a) => a.name === "Claude Code"));
+  assert.ok(data.absent.some((b) => b.name === "Codex CLI"));
+  assert.ok(data.attention.some((a) => a.kind === "credentials"), "leftover login flagged");
+  assert.equal((fs.statSync(out).mode & 0o777).toString(8), "600", "report is readable by its owner only");
+});
